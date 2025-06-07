@@ -2,14 +2,14 @@ package app
 
 import (
 	"golang_template/handler/controllers"
-	"golang_template/internal/logging"
 	rpc_service "golang_template/proto"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-func (a *application) InitGRPCServer(controller controllers.Controllers, logger logging.Logger) *grpc.Server {
+func (a *application) InitGRPCServer(controller controllers.Controllers, logger *zap.Logger) *grpc.Server {
 	grpcServer := grpc.NewServer()
 	// Register server with controller
 	rpc_service.RegisterRpcServiceServer(grpcServer, controller.RpcServiceController())

@@ -4,9 +4,8 @@ import (
 	"context"
 	"golang_template/handler/routers"
 	"golang_template/internal/config"
-	"golang_template/internal/database/clickhouse"
+
 	"golang_template/internal/database/postgres"
-	"golang_template/internal/logging"
 	"log"
 	"net"
 
@@ -38,7 +37,6 @@ func (a *application) Setup() {
 			a.InitFramework,
 			a.InitController,
 			a.InitServices,
-			a.InitClickhouseDatabase,
 			a.InitRepositories,
 			a.InitRedis,
 			a.InitDatabase,
@@ -64,20 +62,7 @@ func (a *application) Setup() {
 			})
 		}),
 
-		fx.Invoke(func(lc fx.Lifecycle, clickhouse clickhouse.ClickhouseDatabase) {
-			lc.Append(fx.Hook{
-				OnStart: func(_ context.Context) error {
-					log.Println("starting clickHouse")
-					return nil
-				},
-				OnStop: func(ctx context.Context) error {
-					log.Println(clickhouse.Close())
-					return nil
-				},
-			})
-		}),
-
-		fx.Invoke(func(lc fx.Lifecycle, grpcServer *grpc.Server, logger logging.Logger) {
+		fx.Invoke(func(lc fx.Lifecycle, grpcServer *grpc.Server, logger *zap.Logger) {
 			logger.Info("Initializing gRPC server")
 			lc.Append(fx.Hook{
 				OnStart: func(_ context.Context) error {
@@ -106,7 +91,7 @@ func (a *application) Setup() {
 			})
 		}),
 
-		fx.Invoke(func(lc fx.Lifecycle, app *fiber.App, logger logging.Logger) {
+		fx.Invoke(func(lc fx.Lifecycle, app *fiber.App, logger *zap.Logger) {
 			// Start Fiber server in a separate goroutine
 			lc.Append(fx.Hook{
 				OnStart: func(_ context.Context) error {

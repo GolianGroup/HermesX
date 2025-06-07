@@ -84,11 +84,6 @@ func GetRedisAddr(cfg *RedisConfig) string {
 	return fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 }
 
-// GetClickhouseAddr returns clickhouse connection address
-func GetClickhouseAddr(cfg *ClickhouseConfig) string {
-	return fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
-}
-
 // NewProductionEncoderConfig returns an opinionated EncoderConfig for
 // production environments.
 //

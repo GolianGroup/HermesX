@@ -3,10 +3,10 @@ package controllers
 import (
 	"time"
 
-	"golang_template/internal/logging"
 	"golang_template/internal/services"
 
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
 )
 
 type SystemController interface {
@@ -16,10 +16,10 @@ type SystemController interface {
 
 type systemController struct {
 	systemService services.SystemService
-	logger        logging.Logger
+	logger        *zap.Logger
 }
 
-func NewSystemController(systemService services.SystemService, logger logging.Logger) SystemController {
+func NewSystemController(systemService services.SystemService, logger *zap.Logger) SystemController {
 	return &systemController{systemService: systemService, logger: logger}
 }
 
@@ -46,4 +46,3 @@ func (controller *systemController) ReadyCheck(c *fiber.Ctx) error {
 		"time":       time.Now(),
 	})
 }
-

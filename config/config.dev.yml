@@ -42,15 +42,6 @@ arango:
   user: "root"
   password: "rootpassword"
 
-clickhouse:
-  host: "template-clickhouse"
-  port: "9000"
-  user: "default"
-  password: "password"
-  database: "default"
-  max_open_conns: 10
-  max_idle_conns: 5
-  debug: true
 
 # You will only need this in production.
 logger:

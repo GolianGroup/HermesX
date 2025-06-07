@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"context"
-	"golang_template/internal/logging"
 	"golang_template/internal/services"
 
-	"golang_template/handler/dtos"
+	dto "golang_template/handler/dtos"
 
 	rpc_service "golang_template/proto"
+
+	"go.uber.org/zap"
 )
 
 type RpcServiceController interface {
@@ -17,7 +18,8 @@ type RpcServiceController interface {
 type rpcServiceController struct {
 	rpcServiceService services.RpcServiceService
 }
-func NewRpcServiceController(service services.RpcServiceService, logger logging.Logger) RpcServiceController {
+
+func NewRpcServiceController(service services.RpcServiceService, logger *zap.Logger) RpcServiceController {
 	return &rpcServiceController{
 		rpcServiceService: service,
 	}

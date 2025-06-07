@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"golang_template/internal/config"
 	"golang_template/internal/helper"
-	"golang_template/internal/logging"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-func (a *application) InitLogger() (logging.Logger, error) {
+func (a *application) InitLogger() (*zap.Logger, error) {
 	if a.config.Server.Mode == "production" {
 		// Config rotation
 		ws := zapcore.AddSync(
@@ -48,7 +47,7 @@ func (a *application) InitLogger() (logging.Logger, error) {
 		logger := zap.New(core)
 		logger.Sync()
 
-		return logging.NewZapLogger(logger), nil
+		return logger, nil
 
 	}
 
@@ -56,5 +55,5 @@ func (a *application) InitLogger() (logging.Logger, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize development logger: %w", err)
 	}
-	return logging.NewZapLogger(logger), nil
+	return logger, nil
 }

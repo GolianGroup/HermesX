@@ -35,14 +35,6 @@ func (s *systemService) ReadyCheck(ctx context.Context) (map[string]RepoStatus, 
 		statuses["postgres"] = RepoStatus{Healthy: true, Error: nil}
 	}
 
-	// Check Clickhouse
-	if err := s.systemRepository.ClickhousePing(ctx); err != nil {
-		statuses["clickhouse"] = RepoStatus{Healthy: false, Error: err}
-		errors = append(errors, err)
-	} else {
-		statuses["clickhouse"] = RepoStatus{Healthy: true, Error: nil}
-	}
-
 	// Check ArangoDB
 	if err := s.systemRepository.ArangoPing(ctx); err != nil {
 		statuses["arango"] = RepoStatus{Healthy: false, Error: err}

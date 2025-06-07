@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"golang_template/internal/database/arango"
-	"golang_template/internal/database/clickhouse"
 	"golang_template/internal/database/postgres"
 	"golang_template/internal/producers"
 )
@@ -12,22 +11,19 @@ type SystemRepository interface {
 	DBPing(ctx context.Context) error
 	ArangoPing(ctx context.Context) error
 	RedisPing(ctx context.Context) error
-	ClickhousePing(ctx context.Context) error
 }
 
 type systemRepository struct {
-	db postgres.Database
+	db     postgres.Database
 	arango arango.ArangoDB
-	redis producers.RedisClient
-	clickhouse clickhouse.ClickhouseDatabase
+	redis  producers.RedisClient
 }
 
-func NewSystemRepository(db postgres.Database, arango arango.ArangoDB, redis producers.RedisClient, clickhouse clickhouse.ClickhouseDatabase) SystemRepository {
-	return &systemRepository{db: db, arango: arango, redis: redis, clickhouse: clickhouse}
+func NewSystemRepository(db postgres.Database, arango arango.ArangoDB, redis producers.RedisClient) SystemRepository {
+	return &systemRepository{db: db, arango: arango, redis: redis}
 }
 
-
-func (r *systemRepository) DBPing(ctx context.Context) error {	
+func (r *systemRepository) DBPing(ctx context.Context) error {
 	if err := r.db.DB().Ping(); err != nil {
 		return err
 	}
@@ -47,11 +43,3 @@ func (r *systemRepository) RedisPing(ctx context.Context) error {
 	}
 	return nil
 }
-
-func (r *systemRepository) ClickhousePing(ctx context.Context) error {
-	if err := r.clickhouse.Ping(ctx); err != nil {
-		return err
-	}
-	return nil
-}
-

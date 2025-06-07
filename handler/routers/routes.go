@@ -16,22 +16,17 @@ type Router interface {
 
 type router struct {
 	systemRouter SystemRouter
-	userRouter  UserRouter
-	videoRouter VideoRouter
-	redisClient producers.RedisClient
-	tracer      trace.Tracer
+	redisClient  producers.RedisClient
+	tracer       trace.Tracer
 }
 
 func NewRouter(controllers controllers.Controllers, redisClient producers.RedisClient, tracer trace.Tracer) Router {
-	userRouter := NewUserRouter(controllers.UserController(), redisClient)
-	videoRouter := NewVideoRouter(controllers.VideoController())	
+
 	systemRouter := NewSystemRouter(controllers.SystemController())
 	return &router{
 		systemRouter: systemRouter,
-		userRouter:  userRouter,
-		videoRouter: videoRouter,
-		redisClient: redisClient,
-		tracer:      tracer,
+		redisClient:  redisClient,
+		tracer:       tracer,
 	}
 }
 
@@ -44,8 +39,4 @@ func (r router) AddRoutes(router fiber.Router) {
 	router.Use(middlewares.TracingMiddleware(r.tracer))
 
 	r.systemRouter.AddRoutes(router)
-
-	r.userRouter.AddRoutes(router)
-	r.videoRouter.AddRoutes(router)
-
 }

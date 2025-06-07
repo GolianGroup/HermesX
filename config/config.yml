@@ -1,15 +1,15 @@
 server:
   port: "8080"
   host: "0.0.0.0"
-  mode: "production"
+  mode: "development"
   read_timeout: 10  # seconds
   write_timeout: 10 # seconds
 
 db:
   host: "localhost"
   port: "5432"
-  user: "postgres"
-  password: "1234"
+  user: "myuser"
+  password: "mypassword"
   dbname: "myapp"
   sslmode: "disable"
   max_conns: 20
@@ -34,12 +34,11 @@ jwt:
   refresh_expire_day: 7
 
 arango:
-  db_name: "arangodb"
-  conn_strs: "tcp://127.0.0.1:8529,http://198.51.100.1:8529"
+  db_name: "catalogdb"
+  conn_strs: "http://127.0.0.1:8529"
   insecure_skip_verify: true
   user: "root"
-  password: "root"
-
+  password: "rootpassword"
 # You will only need this in production.
 logger:
   level: "info"
@@ -48,10 +47,14 @@ logger:
     level_key: "level"
     name_key: "logger"
   rotation_config:
-    filename: "var/lib/test.log"
-    max_size: 1
-    max_backups: 1
+    filename: "var/lib/test.txt"
+    max_size: 500
+    max_backups: 2
     max_age: 1
+  fluentbit_config:
+    host: "fluent-bit"
+    port: 24224
+    tag: "test.template"
 
 tracer:
   service_name: "test"
