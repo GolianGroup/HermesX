@@ -1,0 +1,9 @@
+./build
+./config
+./docs
+Makefile
+README.MD
+LICENSE
+.gitignore
+.git
+.dockerignore
