@@ -3,7 +3,7 @@ package arango
 import (
 	"context"
 	"fmt"
-	"golang_template/internal/config"
+	"hermesx/internal/config"
 	"time"
 
 	"github.com/arangodb/go-driver/v2/arangodb"
@@ -13,7 +13,7 @@ import (
 type ArangoDB interface {
 	Database(ctx context.Context) arangodb.Database
 	GetCollection(ctx context.Context, name string) (arangodb.Collection, error)
-	Ping(ctx context.Context) (error)
+	Ping(ctx context.Context) error
 }
 
 type arangoDB struct {
@@ -61,7 +61,7 @@ func NewArangoDB(ctx context.Context, conf *config.ArangoConfig) (ArangoDB, erro
 	}, nil
 }
 
-func (a *arangoDB) Ping(ctx context.Context) (error) {
+func (a *arangoDB) Ping(ctx context.Context) error {
 	_, err := a.database.Info(ctx)
 	if err != nil {
 		return err

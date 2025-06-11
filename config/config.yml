@@ -10,7 +10,7 @@ db:
   port: "5432"
   user: "myuser"
   password: "mypassword"
-  dbname: "myapp"
+  dbname: "mydb"
   sslmode: "disable"
   max_conns: 20
   min_conns: 1
@@ -65,4 +65,4 @@ grpc:
   grpc_host: "localhost"
   grpc_port: "50051"
 
-environment: "production"
+environment: "development"

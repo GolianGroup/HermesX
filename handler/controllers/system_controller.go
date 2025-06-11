@@ -3,7 +3,7 @@ package controllers
 import (
 	"time"
 
-	"golang_template/internal/services"
+	"hermesx/internal/services"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"

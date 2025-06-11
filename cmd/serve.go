@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"context"
-	"golang_template/app"
-	"golang_template/internal/config"
+	"hermesx/app"
+	"hermesx/internal/config"
 	"log"
 
 	"github.com/spf13/cobra"

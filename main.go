@@ -1,6 +1,6 @@
 package main
 
-import "golang_template/cmd"
+import "hermesx/cmd"
 
 func main() {
 	cmd.Execute()

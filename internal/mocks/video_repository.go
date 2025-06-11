@@ -10,7 +10,7 @@
 package mocks
 
 import (
-	models "golang_template/internal/repositories/models"
+	models "hermesx/internal/repositories/models"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"

@@ -1,8 +1,8 @@
 package app
 
 import (
-	"golang_template/handler/controllers"
-	"golang_template/internal/services"
+	"hermesx/handler/controllers"
+	"hermesx/internal/services"
 
 	"go.uber.org/zap"
 )

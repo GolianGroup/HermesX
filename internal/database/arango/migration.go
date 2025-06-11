@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"golang_template/internal/config"
+	"hermesx/internal/config"
 	"log"
 	"os"
 	"path/filepath"

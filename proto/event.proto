@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package notification;
+option go_package = "/proto/event/";
+
+import "google/protobuf/timestamp.proto"; 
+import "google/protobuf/empty.proto"; 
+
+service EventService {
+    rpc CreateEvent (CreateEventRequest) returns (EventResponse);
+    rpc GetEventByName (GetEventByNameRequest) returns (EventResponse);
+    rpc GetAllEvents (google.protobuf.Empty) returns (EventResponseList);
+    rpc RemoveEvent (GetEventByNameRequest) returns (RemoveEventResponse);
+}
+
+message EventResponseList {
+    repeated EventResponse events = 1;
+}
+
+message RemoveEventResponse {
+    string message = 1;
+}
+
+
+message CreateEventRequest {
+    string name = 1;
+    bool is_critical = 2;
+    string preferred_channel = 3;
+}
+
+message GetEventByNameRequest {
+    string name = 1;
+}
+
+message EventResponse {
+    string id = 1;
+    string name = 2;
+    bool is_critical = 3;
+    string preferred_channel = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+}

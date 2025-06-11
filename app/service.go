@@ -1,10 +1,11 @@
 package app
 
 import (
-	"golang_template/internal/repositories"
-	"golang_template/internal/services"
+	"hermesx/internal/producers"
+	"hermesx/internal/repositories"
+	"hermesx/internal/services"
 )
 
-func (a *application) InitServices(repository repositories.Repository) services.Service {
-	return services.NewService(repository)
+func (a *application) InitServices(repository repositories.Repository, redis producers.RedisClient) services.Service {
+	return services.NewService(repository, redis)
 }

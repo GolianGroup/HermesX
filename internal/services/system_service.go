@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	"golang_template/internal/repositories"
+	"hermesx/internal/repositories"
 )
 
 type RepoStatus struct {

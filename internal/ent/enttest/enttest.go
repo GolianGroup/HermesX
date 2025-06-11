@@ -5,11 +5,11 @@ package enttest
 import (
 	"context"
 
-	"golang_template/internal/ent"
+	"hermesx/internal/ent"
 	// required by schema hooks.
-	_ "golang_template/internal/ent/runtime"
+	_ "hermesx/internal/ent/runtime"
 
-	"golang_template/internal/ent/migrate"
+	"hermesx/internal/ent/migrate"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

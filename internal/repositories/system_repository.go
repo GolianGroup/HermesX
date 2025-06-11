@@ -2,9 +2,9 @@ package repositories
 
 import (
 	"context"
-	"golang_template/internal/database/arango"
-	"golang_template/internal/database/postgres"
-	"golang_template/internal/producers"
+	"hermesx/internal/database/arango"
+	"hermesx/internal/database/postgres"
+	"hermesx/internal/producers"
 )
 
 type SystemRepository interface {
@@ -38,7 +38,7 @@ func (r *systemRepository) ArangoPing(ctx context.Context) error {
 }
 
 func (r *systemRepository) RedisPing(ctx context.Context) error {
-	if err := r.redis.RedisStorage().Conn().Ping(ctx).Err(); err != nil {
+	if err := r.redis.Ping(ctx).Err(); err != nil {
 		return err
 	}
 	return nil

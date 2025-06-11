@@ -4,8 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"golang_template/internal/config"
-	"golang_template/internal/database/arango"
+	"hermesx/internal/config"
+	"hermesx/internal/database/arango"
 	"log"
 
 	"github.com/spf13/cobra"

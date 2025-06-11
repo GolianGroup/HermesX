@@ -6,7 +6,7 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"golang_template/internal/config"
+	"hermesx/internal/config"
 	"log"
 
 	"github.com/jackc/pgx/v5/pgconn"

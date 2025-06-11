@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in golang_template/internal/ent/runtime.go
+// The schema-stitching logic is generated in hermesx/internal/ent/runtime.go
 
 const (
 	Version = "v0.14.1"                                         // Version of ent codegen.

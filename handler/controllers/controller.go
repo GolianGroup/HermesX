@@ -1,34 +1,37 @@
 package controllers
 
 import (
-	"golang_template/internal/services"
+	"hermesx/internal/services"
+	rpc_service "hermesx/proto/event"
 
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 )
 
 type Controllers interface {
-	RpcServiceController() RpcServiceController
 	SystemController() SystemController
+	EventController() rpc_service.EventServiceServer
 }
 
 type controllers struct {
-	rpcServiceController RpcServiceController
-	systemController     SystemController
+	systemController SystemController
+	eventController  rpc_service.EventServiceServer
 }
 
 func NewControllers(s services.Service, logger *zap.Logger) Controllers {
-	rpcServiceController := NewRpcServiceController(s.RpcServiceService(), logger)
+	validator := validator.New()
 	systemController := NewSystemController(s.SystemService(), logger)
+	eventController := NewEventController(s.EventService(), logger, validator)
 	return &controllers{
-		rpcServiceController: rpcServiceController,
-		systemController:     systemController,
+		systemController: systemController,
+		eventController:  eventController,
 	}
-}
-
-func (c *controllers) RpcServiceController() RpcServiceController {
-	return c.rpcServiceController
 }
 
 func (c *controllers) SystemController() SystemController {
 	return c.systemController
+}
+
+func (c *controllers) EventController() rpc_service.EventServiceServer {
+	return c.eventController
 }

@@ -1,30 +1,34 @@
 package services
 
-import "golang_template/internal/repositories"
+import (
+	"hermesx/internal/producers"
+	"hermesx/internal/repositories"
+)
 
 type Service interface {
-	RpcServiceService() RpcServiceService
 	SystemService() SystemService
+	EventService() EventService
 }
 
 type service struct {
-	rpcServiceService RpcServiceService
-	systemService     SystemService
+	systemService SystemService
+	eventService  EventService
 }
 
-func NewService(repo repositories.Repository) Service {
-	rpcServiceService := NewRpcServiceService()
+func NewService(repo repositories.Repository, redis producers.RedisClient) Service {
 	systemService := NewSystemService(repo.SystemRepository())
-	return &service{
-		rpcServiceService: rpcServiceService,
-		systemService:     systemService,
-	}
-}
+	eventService := NewEventService(repo.EventRepository(), redis)
 
-func (s *service) RpcServiceService() RpcServiceService {
-	return s.rpcServiceService
+	return &service{
+		systemService: systemService,
+		eventService:  eventService,
+	}
 }
 
 func (s *service) SystemService() SystemService {
 	return s.systemService
+}
+
+func (s *service) EventService() EventService {
+	return s.eventService
 }

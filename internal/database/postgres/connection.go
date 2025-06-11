@@ -3,8 +3,8 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"golang_template/internal/config"
-	"golang_template/internal/ent"
+	"hermesx/internal/config"
+	"hermesx/internal/ent"
 	"time"
 
 	dbsql "database/sql"

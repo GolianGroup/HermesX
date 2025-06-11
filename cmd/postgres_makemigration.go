@@ -4,8 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"golang_template/internal/config"
-	"golang_template/internal/database/postgres"
+	"hermesx/internal/config"
+	"hermesx/internal/database/postgres"
 	"log"
 
 	"github.com/spf13/cobra"

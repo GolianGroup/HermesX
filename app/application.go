@@ -2,10 +2,10 @@ package app
 
 import (
 	"context"
-	"golang_template/handler/routers"
-	"golang_template/internal/config"
+	"hermesx/handler/routers"
+	"hermesx/internal/config"
 
-	"golang_template/internal/database/postgres"
+	"hermesx/internal/database/postgres"
 	"log"
 	"net"
 
@@ -80,7 +80,7 @@ func (a *application) Setup() {
 							logger.Info("Failed to serve gRPC", zap.Error(err))
 						}
 					}()
-					// log.Println("gRPC server started on", a.config.GRPC.Host+":"+a.config.GRPC.Port)
+					log.Println("gRPC server started on", a.config.GRPC.Host+":"+a.config.GRPC.Port)
 					return nil
 				},
 				OnStop: func(_ context.Context) error {

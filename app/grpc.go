@@ -1,8 +1,9 @@
 package app
 
 import (
-	"golang_template/handler/controllers"
-	rpc_service "golang_template/proto"
+	"hermesx/handler/controllers"
+
+	rpc_service "hermesx/proto/event"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -11,8 +12,8 @@ import (
 
 func (a *application) InitGRPCServer(controller controllers.Controllers, logger *zap.Logger) *grpc.Server {
 	grpcServer := grpc.NewServer()
-	// Register server with controller
-	rpc_service.RegisterRpcServiceServer(grpcServer, controller.RpcServiceController())
+
+	rpc_service.RegisterEventServiceServer(grpcServer, controller.EventController())
 
 	if a.config.Environment == "development" {
 		reflection.Register(grpcServer)

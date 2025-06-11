@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"context"
-	"golang_template/internal/config"
+	"hermesx/internal/config"
 	"log"
 	"time"
 

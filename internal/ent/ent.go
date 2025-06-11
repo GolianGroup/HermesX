@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"golang_template/internal/ent/user"
+	"hermesx/internal/ent/event"
 	"reflect"
 	"sync"
 
@@ -73,7 +73,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			user.Table: user.ValidColumn,
+			event.Table: event.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

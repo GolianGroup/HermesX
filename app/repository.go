@@ -1,10 +1,10 @@
 package app
 
 import (
-	"golang_template/internal/database/arango"
-	"golang_template/internal/database/postgres"
-	"golang_template/internal/producers"
-	"golang_template/internal/repositories"
+	"hermesx/internal/database/arango"
+	"hermesx/internal/database/postgres"
+	"hermesx/internal/producers"
+	"hermesx/internal/repositories"
 )
 
 func (a *application) InitRepositories(db postgres.Database, arango arango.ArangoDB, redis producers.RedisClient) repositories.Repository {

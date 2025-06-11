@@ -3,7 +3,7 @@ package arango
 import (
 	"context"
 	"fmt"
-	"golang_template/internal/config"
+	"hermesx/internal/config"
 	"log"
 	"testing"
 	"time"

@@ -3,8 +3,9 @@
 package ent
 
 import (
-	"golang_template/internal/ent/schema"
-	"golang_template/internal/ent/user"
+	"hermesx/internal/ent/event"
+	"hermesx/internal/ent/schema"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -13,18 +14,60 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	userFields := schema.User{}.Fields()
-	_ = userFields
-	// userDescUsername is the schema descriptor for username field.
-	userDescUsername := userFields[1].Descriptor()
-	// user.UsernameValidator is a validator for the "username" field. It is called by the builders before save.
-	user.UsernameValidator = userDescUsername.Validators[0].(func(string) error)
-	// userDescPassword is the schema descriptor for password field.
-	userDescPassword := userFields[2].Descriptor()
-	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
-	user.PasswordValidator = userDescPassword.Validators[0].(func(string) error)
-	// userDescID is the schema descriptor for id field.
-	userDescID := userFields[0].Descriptor()
-	// user.DefaultID holds the default value on creation for the id field.
-	user.DefaultID = userDescID.Default.(func() uuid.UUID)
+	eventFields := schema.Event{}.Fields()
+	_ = eventFields
+	// eventDescName is the schema descriptor for name field.
+	eventDescName := eventFields[1].Descriptor()
+	// event.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	event.NameValidator = func() func(string) error {
+		validators := eventDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// eventDescIsCritical is the schema descriptor for is_critical field.
+	eventDescIsCritical := eventFields[3].Descriptor()
+	// event.DefaultIsCritical holds the default value on creation for the is_critical field.
+	event.DefaultIsCritical = eventDescIsCritical.Default.(bool)
+	// eventDescPreferredChannel is the schema descriptor for preferred_channel field.
+	eventDescPreferredChannel := eventFields[4].Descriptor()
+	// event.PreferredChannelValidator is a validator for the "preferred_channel" field. It is called by the builders before save.
+	event.PreferredChannelValidator = func() func(string) error {
+		validators := eventDescPreferredChannel.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(preferred_channel string) error {
+			for _, fn := range fns {
+				if err := fn(preferred_channel); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// eventDescCreatedAt is the schema descriptor for created_at field.
+	eventDescCreatedAt := eventFields[5].Descriptor()
+	// event.DefaultCreatedAt holds the default value on creation for the created_at field.
+	event.DefaultCreatedAt = eventDescCreatedAt.Default.(func() time.Time)
+	// eventDescUpdatedAt is the schema descriptor for updated_at field.
+	eventDescUpdatedAt := eventFields[6].Descriptor()
+	// event.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	event.DefaultUpdatedAt = eventDescUpdatedAt.Default.(func() time.Time)
+	// event.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	event.UpdateDefaultUpdatedAt = eventDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// eventDescID is the schema descriptor for id field.
+	eventDescID := eventFields[0].Descriptor()
+	// event.DefaultID holds the default value on creation for the id field.
+	event.DefaultID = eventDescID.Default.(func() uuid.UUID)
 }

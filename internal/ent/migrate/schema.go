@@ -8,21 +8,37 @@ import (
 )
 
 var (
-	// UsersColumns holds the columns for the "users" table.
-	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "username", Type: field.TypeString, Unique: true},
-		{Name: "password", Type: field.TypeString},
+	// EventsColumns holds the columns for the "events" table.
+	EventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "metadata", Type: field.TypeJSON},
+		{Name: "is_critical", Type: field.TypeBool, Default: false},
+		{Name: "preferred_channel", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
-	// UsersTable holds the schema information for the "users" table.
-	UsersTable = &schema.Table{
-		Name:       "users",
-		Columns:    UsersColumns,
-		PrimaryKey: []*schema.Column{UsersColumns[0]},
+	// EventsTable holds the schema information for the "events" table.
+	EventsTable = &schema.Table{
+		Name:       "events",
+		Columns:    EventsColumns,
+		PrimaryKey: []*schema.Column{EventsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "event_name",
+				Unique:  true,
+				Columns: []*schema.Column{EventsColumns[1]},
+			},
+			{
+				Name:    "event_preferred_channel_name",
+				Unique:  false,
+				Columns: []*schema.Column{EventsColumns[4], EventsColumns[1]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		UsersTable,
+		EventsTable,
 	}
 )
 

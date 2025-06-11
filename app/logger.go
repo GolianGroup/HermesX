@@ -2,8 +2,8 @@ package app
 
 import (
 	"fmt"
-	"golang_template/internal/config"
-	"golang_template/internal/helper"
+	"hermesx/internal/config"
+	"hermesx/internal/helper"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

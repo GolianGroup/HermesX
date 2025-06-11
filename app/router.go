@@ -1,9 +1,9 @@
 package app
 
 import (
-	"golang_template/handler/controllers"
-	"golang_template/handler/routers"
-	"golang_template/internal/producers"
+	"hermesx/handler/controllers"
+	"hermesx/handler/routers"
+	"hermesx/internal/producers"
 
 	"github.com/gofiber/fiber/v2"
 	oteltrace "go.opentelemetry.io/otel/trace"

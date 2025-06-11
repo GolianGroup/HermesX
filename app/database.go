@@ -1,8 +1,8 @@
 package app
 
 import (
-	"golang_template/internal/database/arango"
-	"golang_template/internal/database/postgres"
+	"hermesx/internal/database/arango"
+	"hermesx/internal/database/postgres"
 
 	"go.uber.org/zap"
 )

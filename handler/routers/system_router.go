@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"golang_template/handler/controllers"
+	"hermesx/handler/controllers"
 
 	"github.com/gofiber/fiber/v2"
 )
