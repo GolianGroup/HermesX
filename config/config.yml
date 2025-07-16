@@ -15,6 +15,16 @@ db:
   max_conns: 20
   min_conns: 1
 
+
+scylladb:
+  hosts:
+    - "127.0.0.1:9042"
+  keyspace: "starnet_main"
+  username: "root"
+  password: "rootpassword"
+  replication_class: "SimpleStrategy"
+  replication_factor: 3
+
 redis:
   host: "localhost"
   port: "6379"
@@ -56,13 +66,40 @@ logger:
     port: 24224
     tag: "test.template"
 
-tracer:
-  service_name: "test"
-  insecure: "true"
-  collector_url: "localhost:4317"
 
 grpc:
   grpc_host: "localhost"
   grpc_port: "50051"
 
 environment: "development"
+
+nats:
+  client_port: 4223
+  server_port: 8223
+  username: user
+  password: password
+  host: 127.0.0.1
+  queue: user-interaction
+  stream_config:
+    name: UserInteraction
+    #Dictates how messages are retained in the stream. Options include:
+    #   limit: Retains messages until limits are exceeded.
+    #   interest: Retains messages as long as there are active interests (consumers).
+    #   workqueue: Retains messages only until acknowledged by consumers.
+    retention: workqueue
+    # Determines the policy for discarding messages when limits are reached.
+    #   old: Discards the oldest messages to make room for new messages.
+    #   new: Rejects new messages when limits are reached (often less common).
+    discard: old
+    # Configures the type of storage used for the stream:
+    #   file: Messages are persisted to disk.
+    #   memory: Messages are held in memory, offering faster performance but volatile storage.
+    storage: file
+    no_ack: false
+    max_consumers: 2
+    max_bytes: 1073741824
+    max_age: 1
+    subjects:
+      - "critical.sms"
+
+

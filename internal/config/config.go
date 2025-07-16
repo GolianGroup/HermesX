@@ -121,3 +121,10 @@ func GetArangoStrings(cfg *ArangoConfig) ([]string, error) {
 
 	return connections, nil
 }
+
+func GetNatsURL(host string, clientPort int) string {
+	return fmt.Sprintf("nats://%s:%d/",
+		host,
+		clientPort,
+	)
+}

@@ -5,7 +5,6 @@ import (
 	"hermesx/handler/routers"
 	"hermesx/internal/config"
 
-	"hermesx/internal/database/postgres"
 	"log"
 	"net"
 
@@ -39,28 +38,13 @@ func (a *application) Setup() {
 			a.InitServices,
 			a.InitRepositories,
 			a.InitRedis,
+			a.InitScyllaDB,
 			a.InitDatabase,
 			a.InitArangoDB,
 			a.InitLogger,
-			a.InitTracerProvider,
 			a.InitGRPCServer,
+			a.InitNats,
 		),
-		fx.Invoke(func(lc fx.Lifecycle, db postgres.Database) {
-			shutdownTracer := a.InitTracer()
-			lc.Append(fx.Hook{
-				OnStart: func(_ context.Context) error {
-					log.Println("starting postgres")
-					return nil
-				},
-				OnStop: func(ctx context.Context) error {
-					if err := shutdownTracer(ctx); err != nil {
-						log.Printf("Error shutting down tracer: %v", err) // this should change after logging branch get merged
-					}
-					log.Println(db.Close())
-					return nil
-				},
-			})
-		}),
 
 		fx.Invoke(func(lc fx.Lifecycle, grpcServer *grpc.Server, logger *zap.Logger) {
 			logger.Info("Initializing gRPC server")

@@ -2,11 +2,9 @@ package routers
 
 import (
 	"hermesx/handler/controllers"
-	"hermesx/handler/middlewares"
 	"hermesx/internal/producers"
 
 	"github.com/gofiber/fiber/v2"
-	"go.opentelemetry.io/otel/trace"
 )
 
 type Router interface {
@@ -14,25 +12,27 @@ type Router interface {
 }
 
 type router struct {
-	systemRouter SystemRouter
-	redisClient  producers.RedisClient
-	tracer       trace.Tracer
+	systemRouter       SystemRouter
+	notificationRouter NotificationRouter
+	redisClient        producers.RedisClient
 }
 
-func NewRouter(controllers controllers.Controllers, redisClient producers.RedisClient, tracer trace.Tracer) Router {
+func NewRouter(controllers controllers.Controllers, redisClient producers.RedisClient) Router {
 
 	systemRouter := NewSystemRouter(controllers.SystemController())
+	notificationRouter := NewNotificationRouter(controllers.NotificationController())
 
 	return &router{
-		systemRouter: systemRouter,
-		redisClient:  redisClient,
-		tracer:       tracer,
+		systemRouter:       systemRouter,
+		notificationRouter: notificationRouter,
+		redisClient:        redisClient,
 	}
 }
 
 func (r router) AddRoutes(router fiber.Router) {
 
-	router.Use(middlewares.TracingMiddleware(r.tracer))
+	notification := router.Group("/notification")
 
 	r.systemRouter.AddRoutes(router)
+	r.notificationRouter.AddRoutes(notification)
 }
