@@ -19,8 +19,9 @@ func NewNotificationRouter(notificationController controllers.NotificationContro
 }
 
 func (r notificationRouter) AddRoutes(router fiber.Router) {
-	router.Post("", r.Controller.CreateNotification) // Create a new notification
+	router.Post("", r.Controller.CreateNotification)
 	router.Post("/broadcast", r.Controller.BroadcastNotification)
+
 	router.Post("/read", r.Controller.ReadNotification)
-	router.Post("/broadcast/read", r.Controller.ReadBroadcast)
+	router.Get("/:profileid", r.Controller.GetUserNotifications)
 }

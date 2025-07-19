@@ -11,6 +11,7 @@ import (
 type Controllers interface {
 	SystemController() SystemController
 	EventController() rpc_service.EventServiceServer
+	RestEventController() RestEventController
 	NotificationController() NotificationController
 }
 
@@ -18,6 +19,7 @@ type controllers struct {
 	systemController       SystemController
 	eventController        rpc_service.EventServiceServer
 	notificationController NotificationController
+	restEventController    RestEventController
 }
 
 func NewControllers(s services.Service, logger *zap.Logger) Controllers {
@@ -25,10 +27,12 @@ func NewControllers(s services.Service, logger *zap.Logger) Controllers {
 	systemController := NewSystemController(s.SystemService(), logger)
 	eventController := NewEventController(s.EventService(), logger, validator)
 	notificationController := NewNotificationController(s.NotificationService(), logger)
+	restEventController := NewRestEventController(s.EventService(), logger)
 	return &controllers{
 		systemController:       systemController,
 		eventController:        eventController,
 		notificationController: notificationController,
+		restEventController:    restEventController,
 	}
 }
 
@@ -42,4 +46,8 @@ func (c *controllers) EventController() rpc_service.EventServiceServer {
 
 func (c *controllers) NotificationController() NotificationController {
 	return c.notificationController
+}
+
+func (c *controllers) RestEventController() RestEventController {
+	return c.restEventController
 }

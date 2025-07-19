@@ -1,6 +1,8 @@
 package dtos
 
-import "github.com/gocql/gocql"
+import (
+	"github.com/gocql/gocql"
+)
 
 type Notification struct {
 	ProfileId gocql.UUID `json:"profile_id" validate:"required,uuid"`
@@ -9,14 +11,22 @@ type Notification struct {
 	Event     string     `json:"event" validate:"required"`
 }
 
-type ReadNotification struct {
-	ProfileId      gocql.UUID `json:"profile_id" validate:"required,uuid"`
-	NotificationId gocql.UUID `json:"notification_id" validate:"required"`
+type GetNotification struct {
+	Id gocql.UUID `json:""`
 }
 
-type ReadBroadcast struct {
-	ProfileId   gocql.UUID `json:"profile_id" validate:"required,uuid"`
-	BroadcastId gocql.UUID `json:"broadcast_id" validate:"required,uuid"`
+type Read struct {
+	ProfileId gocql.UUID `json:"profile_id" validate:"required,uuid"`
+	Id        gocql.UUID `json:"id" validate:"required,uuid"`
+	Type      string     `json:"type" validate:"required"`
+}
+
+type UserNotification struct {
+	ProfileId gocql.UUID `params:"profileid" validate:"required,uuid"`
+}
+
+type EventByName struct {
+	Name string `params:"name" validate:"required"`
 }
 
 type Broadcast struct {
