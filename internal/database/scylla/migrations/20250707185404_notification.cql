@@ -5,7 +5,7 @@
 CREATE TABLE IF NOT EXISTS notification (
     id UUID,
     profile_id UUID,
-    has_read INT, -- 0 = false, 1 = true
+    has_read BOOLEAN,
     title TEXT,
     message TEXT,
     created_at TIMESTAMP,

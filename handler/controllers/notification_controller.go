@@ -14,7 +14,7 @@ type NotificationController interface {
 	CreateNotification(ctx *fiber.Ctx) error
 	BroadcastNotification(ctx *fiber.Ctx) error
 	ReadNotification(ctx *fiber.Ctx) error
-	ReadBroadcast(ctx *fiber.Ctx) error
+	GetUserNotifications(ctx *fiber.Ctx) error
 }
 
 type notificationController struct {
@@ -88,33 +88,7 @@ func (c *notificationController) BroadcastNotification(ctx *fiber.Ctx) error {
 }
 
 func (c *notificationController) ReadNotification(ctx *fiber.Ctx) error {
-	var readNotification dtos.ReadNotification
-
-	if err := ctx.BodyParser(&readNotification); err != nil {
-		c.logger.Debug("Error in ReadNotification body parser", zap.Error(err))
-		return err
-	}
-
-	err := c.validate.ValidateStruct(readNotification)
-	if err != nil {
-		return err
-	}
-
-	if err := c.service.ReadNotification(ctx.Context(), readNotification.NotificationId, readNotification.ProfileId); err != nil {
-		return err
-	}
-
-	return ctx.Status(fiber.StatusAccepted).JSON(
-		presenters.SuccessWithDataResponse(
-			fiber.Map{
-				"done": true,
-			},
-		),
-	)
-}
-
-func (c *notificationController) ReadBroadcast(ctx *fiber.Ctx) error {
-	var read dtos.ReadBroadcast
+	var read dtos.Read
 
 	if err := ctx.BodyParser(&read); err != nil {
 		c.logger.Debug("Error in ReadBrodacast body parser", zap.Error(err))
@@ -126,8 +100,15 @@ func (c *notificationController) ReadBroadcast(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	if err := c.service.ReadBroadcastNotification(ctx.Context(), read.BroadcastId, read.ProfileId); err != nil {
-		return err
+	switch read.Type {
+	case "individual":
+		if err := c.service.ReadNotification(ctx.Context(), read.Id, read.ProfileId); err != nil {
+			return err
+		}
+	case "broadcast":
+		if err := c.service.ReadBroadcastNotification(ctx.Context(), read.Id, read.ProfileId); err != nil {
+			return err
+		}
 	}
 
 	return ctx.Status(fiber.StatusAccepted).JSON(
@@ -137,4 +118,25 @@ func (c *notificationController) ReadBroadcast(ctx *fiber.Ctx) error {
 			},
 		),
 	)
+}
+
+func (c *notificationController) GetUserNotifications(ctx *fiber.Ctx) error {
+	var notifications dtos.UserNotification
+
+	if err := ctx.ParamsParser(&notifications); err != nil {
+		c.logger.Debug("Error in GetUserNotifications params parser", zap.Error(err))
+		return err
+	}
+
+	err := c.validate.ValidateStruct(notifications)
+	if err != nil {
+		return err
+	}
+
+	result, err := c.service.GetUserNotifications(ctx.Context(), notifications.ProfileId)
+	if err != nil {
+		return err
+	}
+	return ctx.Status(fiber.StatusOK).JSON(presenters.UnifiedNotificationsResponse(result))
+
 }

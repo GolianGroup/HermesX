@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"hermesx/internal/database/scylla"
 	"hermesx/internal/repositories/models"
 	"time"
@@ -17,6 +18,9 @@ type NotificationRepository interface {
 	ReadNotification(ctx context.Context, id, profileId gocql.UUID) error
 	SetDeliveryStatus(ctx context.Context, notification models.DeliveryStatus) error
 	SetBroadcastDeliveryStatus(ctx context.Context, broadcast models.BroadcastDeliveryStatus) error
+	FetchUserNotifications(ctx context.Context, profileId gocql.UUID) ([]models.GetNotification, error)
+	FetchBroadcasts(ctx context.Context) ([]models.Broadcast, error)
+	FetchUserReadBroadcast(ctx context.Context, profileId gocql.UUID) ([]gocql.UUID, error)
 }
 
 type notificationRepository struct {
@@ -40,7 +44,7 @@ func (n *notificationRepository) CreateNotification(ctx context.Context, notific
 			query,
 			notification.ID,
 			notification.ProfileId,
-			0,
+			false,
 			notification.Title,
 			notification.Message,
 			time.Now().UTC(),
@@ -172,4 +176,90 @@ func (n *notificationRepository) SetBroadcastDeliveryStatus(ctx context.Context,
 	}
 
 	return nil
+}
+
+func (n *notificationRepository) FetchUserNotifications(ctx context.Context, profileId gocql.UUID) ([]models.GetNotification, error) {
+	query := `SELECT id, title, message, has_read FROM notification WHERE profile_id = ?;`
+
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	iter := n.scylla.Session().
+		Query(query, profileId).
+		WithContext(ctx).
+		Iter()
+
+	var notifications []models.GetNotification
+	var id gocql.UUID
+	var title, message string
+	var hasRead bool
+
+	for iter.Scan(&id, &title, &message, &hasRead) {
+		notifications = append(notifications, models.GetNotification{
+			ID:      id,
+			Title:   title,
+			Message: message,
+			HasRead: hasRead,
+		})
+	}
+
+	if err := iter.Close(); err != nil {
+		return nil, fmt.Errorf("failed to fetch notifications: %w", err)
+	}
+	return notifications, nil
+
+}
+
+func (n *notificationRepository) FetchBroadcasts(ctx context.Context) ([]models.Broadcast, error) {
+	query := `SELECT id, title, message FROM broadcast;`
+
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	iter := n.scylla.Session().
+		Query(query).
+		WithContext(ctx).
+		Iter()
+
+	var notifications []models.Broadcast
+	var id gocql.UUID
+	var title, message string
+
+	for iter.Scan(&id, &title, &message) {
+		notifications = append(notifications, models.Broadcast{
+			ID:      id,
+			Title:   title,
+			Message: message,
+		})
+	}
+	if err := iter.Close(); err != nil {
+		return nil, fmt.Errorf("failed to fetch notifications: %w", err)
+	}
+	return notifications, nil
+
+}
+
+func (n *notificationRepository) FetchUserReadBroadcast(ctx context.Context, profileId gocql.UUID) ([]gocql.UUID, error) {
+	query := `SELECT broadcast_id FROM broadcast_read WHERE profile_id = ?;`
+
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	iter := n.scylla.Session().
+		Query(query, profileId).
+		WithContext(ctx).
+		Iter()
+
+	var ids []gocql.UUID
+	var broadcast_id gocql.UUID
+
+	for iter.Scan(&broadcast_id) {
+		ids = append(ids, broadcast_id)
+	}
+
+	if err := iter.Close(); err != nil {
+		return nil, fmt.Errorf("failed to fetch notifications: %w", err)
+	}
+
+	return ids, nil
 }

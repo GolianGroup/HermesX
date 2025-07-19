@@ -19,6 +19,7 @@ type NotificationService interface {
 	BroadcastNotification(ctx context.Context, broadcast *dtos.Broadcast) error
 	ReadNotification(ctx context.Context, notificationId gocql.UUID, profileId gocql.UUID) error
 	ReadBroadcastNotification(ctx context.Context, broadcastId gocql.UUID, profileId gocql.UUID) error
+	GetUserNotifications(ctx context.Context, profileId gocql.UUID) ([]models.UnifiedNotifications, error)
 }
 
 type notificationService struct {
@@ -217,6 +218,60 @@ func (n *notificationService) ReadBroadcastNotification(ctx context.Context, bro
 		return err
 	}
 	return nil
+}
+
+func (n *notificationService) GetUserNotifications(ctx context.Context, profileId gocql.UUID) ([]models.UnifiedNotifications, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	var result []models.UnifiedNotifications
+
+	userNotifs, err := n.notificationRepo.FetchUserNotifications(ctx, profileId)
+	if err != nil {
+		n.logger.Error("Failed to fetch user notifications", zap.Error(err))
+		return nil, err
+	}
+	for _, notifs := range userNotifs {
+		result = append(result, models.UnifiedNotifications{
+			ID:      notifs.ID,
+			Title:   notifs.Title,
+			Message: notifs.Message,
+			Type:    "individual",
+			HasRead: notifs.HasRead,
+		})
+	}
+
+	broadcastNotifs, err := n.notificationRepo.FetchBroadcasts(ctx)
+	if err != nil {
+		n.logger.Error("Failed to fetch broadcast notifications", zap.Error(err))
+		return nil, err
+	}
+
+	broadcastReads, err := n.notificationRepo.FetchUserReadBroadcast(ctx, profileId)
+	if err != nil {
+		n.logger.Error("Failed to fetch broadcast notifications", zap.Error(err))
+		return nil, err
+	}
+
+	readSet := make(map[gocql.UUID]struct{}, len(broadcastReads))
+	for _, id := range broadcastReads {
+		readSet[id] = struct{}{}
+	}
+
+	for _, notif := range broadcastNotifs {
+		_, hasRead := readSet[notif.ID]
+
+		result = append(result, models.UnifiedNotifications{
+			ID:      notif.ID,
+			Title:   notif.Title,
+			Message: notif.Message,
+			Type:    "broadcast",
+			HasRead: hasRead,
+		})
+	}
+
+	return result, nil
+
 }
 
 func (n *notificationService) publishCriticalNotification(_ context.Context, subject string, message nats.CriticalMessage) error {

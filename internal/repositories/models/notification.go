@@ -13,6 +13,13 @@ type Notification struct {
 	Message   string     `cql:"message"`
 }
 
+type GetNotification struct {
+	ID      gocql.UUID `cql:"id"`
+	Title   string     `cql:"title"`
+	Message string     `cql:"message"`
+	HasRead bool       `cql:"has_read"`
+}
+
 type Broadcast struct {
 	ID      gocql.UUID `cql:"id"`
 	Title   string     `cql:"title"`
@@ -24,6 +31,13 @@ type ReadBroadcast struct {
 	BroadcastId gocql.UUID `cql:"broadcast_id"`
 }
 
+type UnifiedNotifications struct {
+	ID      gocql.UUID `json:"id"`
+	Title   string     `json:"title"`
+	Message string     `json:"message"`
+	Type    string     `json:"type"`
+	HasRead bool       `json:"has_read"`
+}
 type DeliveryStatus struct {
 	NotificationId gocql.UUID `cql:"notification_id"`
 	ProfileId      gocql.UUID `cql:"profile_id"`
