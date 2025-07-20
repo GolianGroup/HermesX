@@ -39,7 +39,9 @@ func (r *eventRepository) Create(ctx context.Context, eventData *ent.Event) erro
 		SetID(eventData.ID).
 		SetName(eventData.Name).
 		SetIsCritical(eventData.IsCritical).
-		SetPreferredChannel(eventData.PreferredChannel)
+		SetIsProtected(eventData.IsProtected).
+		SetPreferredChannel(eventData.PreferredChannel).
+		SetTemplate(eventData.Template)
 
 	// Set metadata only if it's provided
 	if eventData.Metadata != nil {

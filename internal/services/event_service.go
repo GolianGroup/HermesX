@@ -37,12 +37,13 @@ func (s *eventService) CreateEvent(ctx context.Context, event *dto.Event) (*dto.
 	defer cancel()
 
 	id := uuid.New()
-
 	entEvent := &ent.Event{
 		ID:               id,
 		Name:             event.Name,
 		IsCritical:       event.IsCritical,
+		IsProtected:      event.IsProtected,
 		PreferredChannel: event.PreferredChannel,
+		Template:         event.Template,
 		Metadata:         event.Metadata,
 	}
 
@@ -68,7 +69,9 @@ func (s *eventService) CreateEvent(ctx context.Context, event *dto.Event) (*dto.
 		ID:               entEvent.ID.String(),
 		Name:             entEvent.Name,
 		IsCritical:       entEvent.IsCritical,
+		IsProtected:      entEvent.IsProtected,
 		PreferredChannel: entEvent.PreferredChannel,
+		Template:         entEvent.Template,
 		Metadata:         entEvent.Metadata,
 		CreatedAt:        timestamppb.Now(),
 		UpdatedAt:        timestamppb.Now(),
@@ -104,7 +107,9 @@ func (s *eventService) GetEventByName(ctx context.Context, name string) (*dto.Ev
 		ID:               entEvent.ID.String(),
 		Name:             entEvent.Name,
 		IsCritical:       entEvent.IsCritical,
+		IsProtected:      entEvent.IsProtected,
 		PreferredChannel: entEvent.PreferredChannel,
+		Template:         entEvent.Template,
 		Metadata:         entEvent.Metadata,
 		CreatedAt:        timestamppb.New(entEvent.CreatedAt),
 		UpdatedAt:        timestamppb.New(entEvent.UpdatedAt),
@@ -134,7 +139,9 @@ func (s *eventService) GetAllEvents(ctx context.Context) ([]*dto.EventResponse, 
 			ID:               entEvent.ID.String(),
 			Name:             entEvent.Name,
 			IsCritical:       entEvent.IsCritical,
+			IsProtected:      entEvent.IsProtected,
 			PreferredChannel: entEvent.PreferredChannel,
+			Template:         entEvent.Template,
 			Metadata:         entEvent.Metadata,
 			CreatedAt:        timestamppb.New(entEvent.CreatedAt),
 			UpdatedAt:        timestamppb.New(entEvent.UpdatedAt),

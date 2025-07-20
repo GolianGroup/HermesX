@@ -20,8 +20,12 @@ const (
 	FieldMetadata = "metadata"
 	// FieldIsCritical holds the string denoting the is_critical field in the database.
 	FieldIsCritical = "is_critical"
+	// FieldIsProtected holds the string denoting the is_protected field in the database.
+	FieldIsProtected = "is_protected"
 	// FieldPreferredChannel holds the string denoting the preferred_channel field in the database.
 	FieldPreferredChannel = "preferred_channel"
+	// FieldTemplate holds the string denoting the template field in the database.
+	FieldTemplate = "template"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -36,7 +40,9 @@ var Columns = []string{
 	FieldName,
 	FieldMetadata,
 	FieldIsCritical,
+	FieldIsProtected,
 	FieldPreferredChannel,
+	FieldTemplate,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -56,6 +62,8 @@ var (
 	NameValidator func(string) error
 	// DefaultIsCritical holds the default value on creation for the "is_critical" field.
 	DefaultIsCritical bool
+	// DefaultIsProtected holds the default value on creation for the "is_protected" field.
+	DefaultIsProtected bool
 	// PreferredChannelValidator is a validator for the "preferred_channel" field. It is called by the builders before save.
 	PreferredChannelValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -86,9 +94,19 @@ func ByIsCritical(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsCritical, opts...).ToFunc()
 }
 
+// ByIsProtected orders the results by the is_protected field.
+func ByIsProtected(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsProtected, opts...).ToFunc()
+}
+
 // ByPreferredChannel orders the results by the preferred_channel field.
 func ByPreferredChannel(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPreferredChannel, opts...).ToFunc()
+}
+
+// ByTemplate orders the results by the template field.
+func ByTemplate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTemplate, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

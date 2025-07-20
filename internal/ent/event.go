@@ -25,8 +25,12 @@ type Event struct {
 	Metadata map[string]interface{} `json:"metadata,omitempty"`
 	// IsCritical holds the value of the "is_critical" field.
 	IsCritical bool `json:"is_critical,omitempty"`
+	// IsProtected holds the value of the "is_protected" field.
+	IsProtected bool `json:"is_protected,omitempty"`
 	// PreferredChannel holds the value of the "preferred_channel" field.
 	PreferredChannel string `json:"preferred_channel,omitempty"`
+	// Template holds the value of the "template" field.
+	Template string `json:"template,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -41,9 +45,9 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case event.FieldMetadata:
 			values[i] = new([]byte)
-		case event.FieldIsCritical:
+		case event.FieldIsCritical, event.FieldIsProtected:
 			values[i] = new(sql.NullBool)
-		case event.FieldName, event.FieldPreferredChannel:
+		case event.FieldName, event.FieldPreferredChannel, event.FieldTemplate:
 			values[i] = new(sql.NullString)
 		case event.FieldCreatedAt, event.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -90,11 +94,23 @@ func (e *Event) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.IsCritical = value.Bool
 			}
+		case event.FieldIsProtected:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_protected", values[i])
+			} else if value.Valid {
+				e.IsProtected = value.Bool
+			}
 		case event.FieldPreferredChannel:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field preferred_channel", values[i])
 			} else if value.Valid {
 				e.PreferredChannel = value.String
+			}
+		case event.FieldTemplate:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field template", values[i])
+			} else if value.Valid {
+				e.Template = value.String
 			}
 		case event.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -153,8 +169,14 @@ func (e *Event) String() string {
 	builder.WriteString("is_critical=")
 	builder.WriteString(fmt.Sprintf("%v", e.IsCritical))
 	builder.WriteString(", ")
+	builder.WriteString("is_protected=")
+	builder.WriteString(fmt.Sprintf("%v", e.IsProtected))
+	builder.WriteString(", ")
 	builder.WriteString("preferred_channel=")
 	builder.WriteString(e.PreferredChannel)
+	builder.WriteString(", ")
+	builder.WriteString("template=")
+	builder.WriteString(e.Template)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(e.CreatedAt.Format(time.ANSIC))

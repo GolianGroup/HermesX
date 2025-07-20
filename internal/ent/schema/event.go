@@ -42,6 +42,10 @@ func (Event) Fields() []ent.Field {
 		field.Bool("is_critical").
 			Default(false),
 
+		// Protected: Event is protected or not, default to false.
+		field.Bool("is_protected").
+			Default(false),
+
 		// PreferredChannel: Validate if it's not empty and is one of the accepted values (e.g., "email", "sms", "push").
 		field.String("preferred_channel").
 			NotEmpty().
@@ -55,6 +59,7 @@ func (Event) Fields() []ent.Field {
 				return errors.New("preferred_channel must be one of [email, sms, push]")
 			}),
 
+		field.String("template").Optional(),
 		// CreatedAt: Timestamp when the event was created, immutable.
 		field.Time("created_at").
 			Default(time.Now).

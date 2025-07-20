@@ -135,7 +135,7 @@ func (n *notificationRepository) ReadNotification(ctx context.Context, id, profi
 }
 
 func (n *notificationRepository) SetDeliveryStatus(ctx context.Context, notification models.DeliveryStatus) error {
-	query := `UPDATE notification_delivery_status SET status = ?, attempts = ?, channel = ?, last_attempt = ? WHERE profile_id = ? AND notification_id = ?`
+	query := `UPDATE notification_delivery_status SET status = ?, attempts = ?, event = ?, last_attempt = ? WHERE profile_id = ? AND notification_id = ?`
 
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
@@ -144,7 +144,7 @@ func (n *notificationRepository) SetDeliveryStatus(ctx context.Context, notifica
 		query,
 		notification.Status,
 		notification.Attempts,
-		notification.Channel,
+		notification.Event,
 		notification.LastAttempt,
 		notification.ProfileId,
 		notification.NotificationId,
@@ -158,7 +158,7 @@ func (n *notificationRepository) SetDeliveryStatus(ctx context.Context, notifica
 }
 
 func (n *notificationRepository) SetBroadcastDeliveryStatus(ctx context.Context, broadcast models.BroadcastDeliveryStatus) error {
-	query := `UPDATE broadcast_delivery_status SET status = ?, attempts = ?, channel = ?, last_attempt = ? WHERE broadcast_id = ?`
+	query := `UPDATE broadcast_delivery_status SET status = ?, attempts = ?, event = ?, last_attempt = ? WHERE broadcast_id = ?`
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -166,7 +166,7 @@ func (n *notificationRepository) SetBroadcastDeliveryStatus(ctx context.Context,
 		query,
 		broadcast.Status,
 		broadcast.Attempts,
-		broadcast.Channel,
+		broadcast.Event,
 		broadcast.LastAttempt,
 		broadcast.BroadcastId,
 	).WithContext(ctx).Consistency(gocql.One).Exec()

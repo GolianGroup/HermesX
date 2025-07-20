@@ -25,7 +25,9 @@ message RemoveEventResponse {
 message CreateEventRequest {
     string name = 1;
     bool is_critical = 2;
-    string preferred_channel = 3;
+    bool is_protected = 3;
+    string preferred_channel = 4;
+    string template = 5;
 }
 
 message GetEventByNameRequest {
@@ -36,7 +38,9 @@ message EventResponse {
     string id = 1;
     string name = 2;
     bool is_critical = 3;
-    string preferred_channel = 4;
-    google.protobuf.Timestamp created_at = 5;
-    google.protobuf.Timestamp updated_at = 6;
+    bool is_protected = 4;
+    string preferred_channel = 5;
+    string template = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
 }

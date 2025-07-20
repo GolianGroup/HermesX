@@ -7,6 +7,8 @@ CREATE TABLE events (
     name VARCHAR(100) NOT NULL UNIQUE,
     metadata JSONB NOT NULL,
     is_critical BOOLEAN NOT NULL DEFAULT FALSE,
+    is_protected BOOLEAN NOT NULL DEFAULT FALSE,
+    template VARCHAR(20),
     preferred_channel VARCHAR(10) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

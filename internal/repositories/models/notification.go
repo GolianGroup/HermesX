@@ -41,7 +41,7 @@ type UnifiedNotifications struct {
 type DeliveryStatus struct {
 	NotificationId gocql.UUID `cql:"notification_id"`
 	ProfileId      gocql.UUID `cql:"profile_id"`
-	Channel        string     `cql:"channel"`
+	Event          string     `cql:"event"`
 	Status         string     `cql:"status"`
 	LastAttempt    time.Time  `cql:"last_attempt"`
 	Attempts       int        `cql:"attempts"`
@@ -49,7 +49,7 @@ type DeliveryStatus struct {
 
 type BroadcastDeliveryStatus struct {
 	BroadcastId gocql.UUID `cql:"broadcast_id"`
-	Channel     string     `cql:"channel"`
+	Event       string     `cql:"event"`
 	Status      string     `cql:"status"`
 	Attempts    int        `cql:"attempts"`
 	LastAttempt time.Time  `cql:"last_attempt"`

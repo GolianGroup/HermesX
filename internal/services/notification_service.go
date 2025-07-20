@@ -25,14 +25,21 @@ type NotificationService interface {
 type notificationService struct {
 	notificationRepo repositories.NotificationRepository
 	eventRepo        repositories.EventRepository
+	profileRepo      repositories.ProfileRepository
 	logger           *zap.Logger
 	nats             nats.NatsConnection
 }
 
-func NewNotificationService(notificationRepo repositories.NotificationRepository, eventRepo repositories.EventRepository, logger *zap.Logger, nats nats.NatsConnection) NotificationService {
+func NewNotificationService(
+	notificationRepo repositories.NotificationRepository,
+	eventRepo repositories.EventRepository,
+	profileRepo repositories.ProfileRepository,
+	logger *zap.Logger,
+	nats nats.NatsConnection,
+) NotificationService {
 	notificationServiceLogger := logger.With(zap.String("service", "notification"))
 	return &notificationService{
-		notificationRepo: notificationRepo, eventRepo: eventRepo, logger: notificationServiceLogger, nats: nats,
+		notificationRepo: notificationRepo, eventRepo: eventRepo, profileRepo: profileRepo, logger: notificationServiceLogger, nats: nats,
 	}
 }
 
@@ -55,15 +62,21 @@ func (n *notificationService) SendNotification(ctx context.Context, notification
 		return err
 	}
 
+	profile, err := n.profileRepo.GetProfile(ctx, notification.ProfileId.String(), notification.ProfileId.String())
+	if err != nil {
+		n.logger.Debug("failed to get profile", zap.Error(err), zap.String("profile_id", notification.ProfileId.String()))
+		return err
+	}
+
 	// send Critical Message
 	if event.IsCritical {
-		subject := fmt.Sprintf("critical.%v", event.PreferredChannel)
+		subject := fmt.Sprintf("individual.%v", event.PreferredChannel)
 
 		n.logger.Debug("Sendning Critical Notification to", zap.String("profile_id", notification.ProfileId.String()), zap.String("channel", subject))
 		deliveryModel := models.DeliveryStatus{
 			NotificationId: id,
 			ProfileId:      model.ProfileId,
-			Channel:        subject,
+			Event:          event.Name,
 			Status:         "initiated",
 			Attempts:       1,
 			LastAttempt:    time.Now().UTC(),
@@ -73,11 +86,18 @@ func (n *notificationService) SendNotification(ctx context.Context, notification
 			n.logger.Error("Failed to save delivery status", zap.Error(err))
 			return err
 		}
-
 		natsMessage := nats.CriticalMessage{
-			ProfileId: notification.ProfileId.String(),
-			Message:   notification.Message,
+			Type:     event.PreferredChannel,
+			Messsage: notification.Message,
 		}
+		switch event.PreferredChannel {
+		case "sms":
+			natsMessage.Destination = profile.PhoneNumber
+		case "email":
+			natsMessage.Destination = profile.Email
+			natsMessage.Template = event.Template
+		}
+
 		if err := n.publishCriticalNotification(ctx, subject, natsMessage); err != nil {
 			deliveryModel.Status = "failed"
 			err = n.notificationRepo.SetDeliveryStatus(ctx, deliveryModel)
@@ -93,27 +113,68 @@ func (n *notificationService) SendNotification(ctx context.Context, notification
 			n.logger.Error("Failed to update delivery status", zap.Error(err))
 			return err
 		}
+		if !event.IsProtected {
+			err = n.notificationRepo.CreateNotification(ctx, model)
+			if err != nil {
+				n.logger.Debug("failed to create critical notification", zap.Error(err))
+				return err
+			}
+		}
 		n.logger.Info("Critical notification delivered", zap.String("notification_id", model.ID.String()))
 		return nil
 
 	}
 
-	subject := fmt.Sprintf("normal.%v", event.PreferredChannel)
-	n.logger.Debug("Sendning Notification to", zap.String("profile_id", notification.ProfileId.String()), zap.String("channel", subject))
+	subject := fmt.Sprintf("individual.%v", event.PreferredChannel)
+	natsMessage := nats.NormalMessage{
+		Type:     event.PreferredChannel,
+		Messsage: notification.Message,
+	}
+
+	switch event.PreferredChannel {
+	case "sms":
+		if profile.Preferences.Notifications.SMS {
+			natsMessage.Destination = profile.PhoneNumber
+		} else {
+			n.logger.Debug("Notification ignored during user prefrences for sms",
+				zap.String("profile_id", notification.ProfileId.String()),
+				zap.String("event", event.Name),
+				zap.String("subject", subject),
+			)
+			return nil
+		}
+	case "email":
+		if profile.Preferences.Notifications.Email {
+			natsMessage.Destination = profile.Email
+			natsMessage.Type = event.Template
+		} else {
+			n.logger.Debug("Notification ignored during user prefrences for email",
+				zap.String("profile_id", notification.ProfileId.String()),
+				zap.String("event", event.Name),
+				zap.String("subject", subject),
+			)
+			return nil
+		}
+	}
+
+	n.logger.Debug("Sendning Notification to",
+		zap.String("profile_id", notification.ProfileId.String()),
+		zap.String("event", event.Name),
+		zap.String("subject", subject),
+	)
+
 	err = n.notificationRepo.CreateNotification(ctx, model)
 	if err != nil {
-		n.logger.Debug("failed to create notification")
+		n.logger.Debug("failed to create notification", zap.Error(err))
 		return err
 	}
 
-	natsMessage := nats.NormalMessage{
-		ProfileId: notification.ProfileId.String(),
-		Title:     notification.Title,
-		Messsage:  notification.Message,
-	}
 	err = n.publishNotification(ctx, subject, natsMessage)
 	if err != nil {
-		n.logger.Error("Failed to send notification on channel", zap.String("channel", subject), zap.Error(err))
+		n.logger.Error("Failed to send notification",
+			zap.String("event", event.Name),
+			zap.String("subject", subject),
+			zap.Error(err))
 		return err
 	}
 
@@ -129,6 +190,7 @@ func (n *notificationService) ReadNotification(ctx context.Context, notification
 	return nil
 }
 
+// This function only works for push notifications TODO: must develop a workerpool to schedule broadcast emails and sms
 func (n *notificationService) BroadcastNotification(ctx context.Context, broadcast *dtos.Broadcast) error {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -147,12 +209,12 @@ func (n *notificationService) BroadcastNotification(ctx context.Context, broadca
 	}
 
 	if event.IsCritical {
-		subject := fmt.Sprintf("critical.%v", event.PreferredChannel)
+		subject := fmt.Sprintf("broadcast.%v", event.PreferredChannel)
 
 		n.logger.Debug("Broadcast Critical Notification")
 		deliverModel := models.BroadcastDeliveryStatus{
 			BroadcastId: id,
-			Channel:     subject,
+			Event:       event.Name,
 			Status:      "initiated",
 			Attempts:    1,
 			LastAttempt: time.Now().UTC(),
@@ -185,8 +247,8 @@ func (n *notificationService) BroadcastNotification(ctx context.Context, broadca
 		return nil
 	}
 
-	subject := fmt.Sprintf("normal.broadcast.%v", event.PreferredChannel)
-	n.logger.Debug("Sendning Broadcast notification in ", zap.String("channel", subject))
+	subject := fmt.Sprintf("broadcast.%v", event.PreferredChannel)
+	n.logger.Debug("Sendning Broadcast notification in ", zap.String("event", subject))
 	err = n.notificationRepo.CreateBroadcastNotification(ctx, model)
 	if err != nil {
 		n.logger.Debug("failed to create broadcast")
@@ -286,7 +348,7 @@ func (n *notificationService) publishCriticalNotification(_ context.Context, sub
 	if err := n.nats.Publish(subject, messageBytes); err != nil {
 		n.logger.Debug("Failed to publish notification",
 			zap.Error(err),
-			zap.String("profileId", message.ProfileId),
+			zap.String("destination", message.Destination),
 		)
 		return err
 	}
@@ -304,7 +366,7 @@ func (n *notificationService) publishNotification(_ context.Context, subject str
 	if err := n.nats.Publish(subject, messageBytes); err != nil {
 		n.logger.Debug("Failed to publish like/dislike message",
 			zap.Error(err),
-			zap.String("profileId", message.ProfileId),
+			zap.String("destination", message.Destination),
 		)
 		return err
 	}
@@ -328,3 +390,5 @@ func (n *notificationService) publishBroadcast(_ context.Context, subject string
 	}
 	return nil
 }
+
+// TODO: Write a function to Broadcast sms and email

@@ -1,14 +1,17 @@
 package nats
 
 type CriticalMessage struct {
-	ProfileId string `json:"profile_id" validate:"required"`
-	Message   string `json:"message" validate:"required"`
+	Destination string `json:"destination" validate:"required"`
+	Type        string `json:"type" validate:"required"`
+	Messsage    string `json:"message" validate:"required"`
+	Template    string `json:"template"`
 }
 
 type NormalMessage struct {
-	ProfileId string `json:"profile_id" validate:"required"`
-	Title     string `json:"title" validate:"required"`
-	Messsage  string `json:"message" validate:"required"`
+	Destination string `json:"destination" validate:"required"`
+	Type        string `json:"type" validate:"required"`
+	Messsage    string `json:"message" validate:"required"`
+	Template    string `json:"template"`
 }
 
 type Broadcast struct {

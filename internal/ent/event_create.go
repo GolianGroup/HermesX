@@ -47,9 +47,37 @@ func (ec *EventCreate) SetNillableIsCritical(b *bool) *EventCreate {
 	return ec
 }
 
+// SetIsProtected sets the "is_protected" field.
+func (ec *EventCreate) SetIsProtected(b bool) *EventCreate {
+	ec.mutation.SetIsProtected(b)
+	return ec
+}
+
+// SetNillableIsProtected sets the "is_protected" field if the given value is not nil.
+func (ec *EventCreate) SetNillableIsProtected(b *bool) *EventCreate {
+	if b != nil {
+		ec.SetIsProtected(*b)
+	}
+	return ec
+}
+
 // SetPreferredChannel sets the "preferred_channel" field.
 func (ec *EventCreate) SetPreferredChannel(s string) *EventCreate {
 	ec.mutation.SetPreferredChannel(s)
+	return ec
+}
+
+// SetTemplate sets the "template" field.
+func (ec *EventCreate) SetTemplate(s string) *EventCreate {
+	ec.mutation.SetTemplate(s)
+	return ec
+}
+
+// SetNillableTemplate sets the "template" field if the given value is not nil.
+func (ec *EventCreate) SetNillableTemplate(s *string) *EventCreate {
+	if s != nil {
+		ec.SetTemplate(*s)
+	}
 	return ec
 }
 
@@ -134,6 +162,10 @@ func (ec *EventCreate) defaults() {
 		v := event.DefaultIsCritical
 		ec.mutation.SetIsCritical(v)
 	}
+	if _, ok := ec.mutation.IsProtected(); !ok {
+		v := event.DefaultIsProtected
+		ec.mutation.SetIsProtected(v)
+	}
 	if _, ok := ec.mutation.CreatedAt(); !ok {
 		v := event.DefaultCreatedAt()
 		ec.mutation.SetCreatedAt(v)
@@ -163,6 +195,9 @@ func (ec *EventCreate) check() error {
 	}
 	if _, ok := ec.mutation.IsCritical(); !ok {
 		return &ValidationError{Name: "is_critical", err: errors.New(`ent: missing required field "Event.is_critical"`)}
+	}
+	if _, ok := ec.mutation.IsProtected(); !ok {
+		return &ValidationError{Name: "is_protected", err: errors.New(`ent: missing required field "Event.is_protected"`)}
 	}
 	if _, ok := ec.mutation.PreferredChannel(); !ok {
 		return &ValidationError{Name: "preferred_channel", err: errors.New(`ent: missing required field "Event.preferred_channel"`)}
@@ -225,9 +260,17 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.SetField(event.FieldIsCritical, field.TypeBool, value)
 		_node.IsCritical = value
 	}
+	if value, ok := ec.mutation.IsProtected(); ok {
+		_spec.SetField(event.FieldIsProtected, field.TypeBool, value)
+		_node.IsProtected = value
+	}
 	if value, ok := ec.mutation.PreferredChannel(); ok {
 		_spec.SetField(event.FieldPreferredChannel, field.TypeString, value)
 		_node.PreferredChannel = value
+	}
+	if value, ok := ec.mutation.Template(); ok {
+		_spec.SetField(event.FieldTemplate, field.TypeString, value)
+		_node.Template = value
 	}
 	if value, ok := ec.mutation.CreatedAt(); ok {
 		_spec.SetField(event.FieldCreatedAt, field.TypeTime, value)

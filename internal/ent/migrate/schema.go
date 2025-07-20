@@ -14,7 +14,9 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "metadata", Type: field.TypeJSON},
 		{Name: "is_critical", Type: field.TypeBool, Default: false},
+		{Name: "is_protected", Type: field.TypeBool, Default: false},
 		{Name: "preferred_channel", Type: field.TypeString},
+		{Name: "template", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}
@@ -32,7 +34,7 @@ var (
 			{
 				Name:    "event_preferred_channel_name",
 				Unique:  false,
-				Columns: []*schema.Column{EventsColumns[4], EventsColumns[1]},
+				Columns: []*schema.Column{EventsColumns[5], EventsColumns[1]},
 			},
 		},
 	}

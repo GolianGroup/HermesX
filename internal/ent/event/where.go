@@ -65,9 +65,19 @@ func IsCritical(v bool) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldIsCritical, v))
 }
 
+// IsProtected applies equality check predicate on the "is_protected" field. It's identical to IsProtectedEQ.
+func IsProtected(v bool) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldIsProtected, v))
+}
+
 // PreferredChannel applies equality check predicate on the "preferred_channel" field. It's identical to PreferredChannelEQ.
 func PreferredChannel(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldPreferredChannel, v))
+}
+
+// Template applies equality check predicate on the "template" field. It's identical to TemplateEQ.
+func Template(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldTemplate, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -155,6 +165,16 @@ func IsCriticalNEQ(v bool) predicate.Event {
 	return predicate.Event(sql.FieldNEQ(FieldIsCritical, v))
 }
 
+// IsProtectedEQ applies the EQ predicate on the "is_protected" field.
+func IsProtectedEQ(v bool) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldIsProtected, v))
+}
+
+// IsProtectedNEQ applies the NEQ predicate on the "is_protected" field.
+func IsProtectedNEQ(v bool) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldIsProtected, v))
+}
+
 // PreferredChannelEQ applies the EQ predicate on the "preferred_channel" field.
 func PreferredChannelEQ(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldPreferredChannel, v))
@@ -218,6 +238,81 @@ func PreferredChannelEqualFold(v string) predicate.Event {
 // PreferredChannelContainsFold applies the ContainsFold predicate on the "preferred_channel" field.
 func PreferredChannelContainsFold(v string) predicate.Event {
 	return predicate.Event(sql.FieldContainsFold(FieldPreferredChannel, v))
+}
+
+// TemplateEQ applies the EQ predicate on the "template" field.
+func TemplateEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldTemplate, v))
+}
+
+// TemplateNEQ applies the NEQ predicate on the "template" field.
+func TemplateNEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldTemplate, v))
+}
+
+// TemplateIn applies the In predicate on the "template" field.
+func TemplateIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldIn(FieldTemplate, vs...))
+}
+
+// TemplateNotIn applies the NotIn predicate on the "template" field.
+func TemplateNotIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldNotIn(FieldTemplate, vs...))
+}
+
+// TemplateGT applies the GT predicate on the "template" field.
+func TemplateGT(v string) predicate.Event {
+	return predicate.Event(sql.FieldGT(FieldTemplate, v))
+}
+
+// TemplateGTE applies the GTE predicate on the "template" field.
+func TemplateGTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldGTE(FieldTemplate, v))
+}
+
+// TemplateLT applies the LT predicate on the "template" field.
+func TemplateLT(v string) predicate.Event {
+	return predicate.Event(sql.FieldLT(FieldTemplate, v))
+}
+
+// TemplateLTE applies the LTE predicate on the "template" field.
+func TemplateLTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldLTE(FieldTemplate, v))
+}
+
+// TemplateContains applies the Contains predicate on the "template" field.
+func TemplateContains(v string) predicate.Event {
+	return predicate.Event(sql.FieldContains(FieldTemplate, v))
+}
+
+// TemplateHasPrefix applies the HasPrefix predicate on the "template" field.
+func TemplateHasPrefix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasPrefix(FieldTemplate, v))
+}
+
+// TemplateHasSuffix applies the HasSuffix predicate on the "template" field.
+func TemplateHasSuffix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasSuffix(FieldTemplate, v))
+}
+
+// TemplateIsNil applies the IsNil predicate on the "template" field.
+func TemplateIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldTemplate))
+}
+
+// TemplateNotNil applies the NotNil predicate on the "template" field.
+func TemplateNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldTemplate))
+}
+
+// TemplateEqualFold applies the EqualFold predicate on the "template" field.
+func TemplateEqualFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldEqualFold(FieldTemplate, v))
+}
+
+// TemplateContainsFold applies the ContainsFold predicate on the "template" field.
+func TemplateContainsFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldContainsFold(FieldTemplate, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

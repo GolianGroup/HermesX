@@ -44,7 +44,7 @@ jwt:
   refresh_expire_day: 7
 
 arango:
-  db_name: "catalogdb"
+  db_name: "profiledb"
   conn_strs: "http://127.0.0.1:8529"
   insecure_skip_verify: true
   user: "root"

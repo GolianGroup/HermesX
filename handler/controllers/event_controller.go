@@ -37,7 +37,9 @@ func (c *eventController) CreateEvent(ctx context.Context, req *rpc_service.Crea
 	eventDTO := dto.Event{
 		Name:             req.Name,
 		IsCritical:       req.IsCritical,
+		IsProtected:      req.IsProtected,
 		PreferredChannel: req.PreferredChannel,
+		Template:         req.Template,
 	}
 
 	err := c.validator.Struct(eventDTO)
@@ -50,6 +52,7 @@ func (c *eventController) CreateEvent(ctx context.Context, req *rpc_service.Crea
 		c.logger.Error("Validation errors occurred", zap.Strings("errors", validationErrors))
 		return nil, errors.New("validation failed: " + strings.Join(validationErrors, ", "))
 	}
+
 	createdEvent, err := c.service.CreateEvent(
 		ctx,
 		&eventDTO,
@@ -63,7 +66,9 @@ func (c *eventController) CreateEvent(ctx context.Context, req *rpc_service.Crea
 		Id:               createdEvent.ID,
 		Name:             createdEvent.Name,
 		IsCritical:       createdEvent.IsCritical,
+		IsProtected:      createdEvent.IsProtected,
 		PreferredChannel: createdEvent.PreferredChannel,
+		Template:         createdEvent.Template,
 		CreatedAt:        createdEvent.CreatedAt,
 		UpdatedAt:        createdEvent.UpdatedAt,
 	}, nil
@@ -81,7 +86,9 @@ func (c *eventController) GetEventByName(ctx context.Context, req *rpc_service.G
 		Id:               event.ID,
 		Name:             event.Name,
 		IsCritical:       event.IsCritical,
+		IsProtected:      event.IsProtected,
 		PreferredChannel: event.PreferredChannel,
+		Template:         event.Template,
 		CreatedAt:        event.CreatedAt,
 		UpdatedAt:        event.UpdatedAt,
 	}, nil
@@ -100,7 +107,9 @@ func (c *eventController) GetAllEvents(ctx context.Context, req *emptypb.Empty) 
 			Id:               event.ID,
 			Name:             event.Name,
 			IsCritical:       event.IsCritical,
+			IsProtected:      event.IsProtected,
 			PreferredChannel: event.PreferredChannel,
+			Template:         event.Template,
 			CreatedAt:        event.CreatedAt,
 			UpdatedAt:        event.UpdatedAt,
 		})

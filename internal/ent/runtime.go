@@ -38,8 +38,12 @@ func init() {
 	eventDescIsCritical := eventFields[3].Descriptor()
 	// event.DefaultIsCritical holds the default value on creation for the is_critical field.
 	event.DefaultIsCritical = eventDescIsCritical.Default.(bool)
+	// eventDescIsProtected is the schema descriptor for is_protected field.
+	eventDescIsProtected := eventFields[4].Descriptor()
+	// event.DefaultIsProtected holds the default value on creation for the is_protected field.
+	event.DefaultIsProtected = eventDescIsProtected.Default.(bool)
 	// eventDescPreferredChannel is the schema descriptor for preferred_channel field.
-	eventDescPreferredChannel := eventFields[4].Descriptor()
+	eventDescPreferredChannel := eventFields[5].Descriptor()
 	// event.PreferredChannelValidator is a validator for the "preferred_channel" field. It is called by the builders before save.
 	event.PreferredChannelValidator = func() func(string) error {
 		validators := eventDescPreferredChannel.Validators
@@ -57,11 +61,11 @@ func init() {
 		}
 	}()
 	// eventDescCreatedAt is the schema descriptor for created_at field.
-	eventDescCreatedAt := eventFields[5].Descriptor()
+	eventDescCreatedAt := eventFields[7].Descriptor()
 	// event.DefaultCreatedAt holds the default value on creation for the created_at field.
 	event.DefaultCreatedAt = eventDescCreatedAt.Default.(func() time.Time)
 	// eventDescUpdatedAt is the schema descriptor for updated_at field.
-	eventDescUpdatedAt := eventFields[6].Descriptor()
+	eventDescUpdatedAt := eventFields[8].Descriptor()
 	// event.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	event.DefaultUpdatedAt = eventDescUpdatedAt.Default.(func() time.Time)
 	// event.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

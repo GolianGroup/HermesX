@@ -1,21 +1,21 @@
 package models
 
 type Profile struct {
-	UserID        string      `json:"user_id" validate:"required"`
-	ProfileID     string      `json:"_key,omitempty" validate:"required"`
-	ProfileName   string      `json:"profile_name" validate:"required,min=3,max=50"`
-	Email         string      `json:"email,omitempty" validate:"email"`
-	BirthDate     string      `json:"birth_date,omitempty" validate:"datetime"`
-	Gender        string      `json:"gender,omitempty" validate:"oneof=male female"`
-	PhoneNumber   string      `json:"phone_number,omitempty" validate:"e164"`
-	Province      string      `json:"province,omitempty"`
-	Avatar        string      `json:"avatar,omitempty" validate:"url"`
-	AvatarID      string      `json:"avatar_id,omitempty" validate:"uuid4"`
-	CreatedAt     string      `json:"created_at"`
-	AccountStatus bool        `json:"account_status,omitempty" validate:"required,boolean"`
-	Preferences   Preferences `json:"preferences"`
-	Privacy       Privacy     `json:"privacy"`
-	UpdatedAt     string      `json:"updated_at,omitempty"`
+	UserID      string      `json:"user_id" validate:"required"`
+	ProfileID   string      `json:"_key,omitempty" validate:"required"`
+	Email       string      `json:"email,omitempty" validate:"email"`
+	PhoneNumber string      `json:"phone_number,omitempty" validate:"e164"`
+	Preferences Preferences `json:"preferences"`
+	UpdatedAt   string      `json:"updated_at,omitempty"`
+	ProfileName string      `json:"profile_name" validate:"required,min=3,max=50"`
+	CreatedAt   string      `json:"created_at"`
+	// BirthDate     string      `json:"birth_date,omitempty" validate:"datetime"`
+	// Gender        string      `json:"gender,omitempty" validate:"oneof=male female"`
+	// Province      string      `json:"province,omitempty"`
+	// Avatar        string      `json:"avatar,omitempty" validate:"url"`
+	// AvatarID      string      `json:"avatar_id,omitempty" validate:"uuid4"`
+	// AccountStatus bool        `json:"account_status,omitempty" validate:"required,boolean"`
+	// Privacy     Privacy     `json:"privacy"`
 }
 
 type Notifications struct {

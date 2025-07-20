@@ -5,7 +5,7 @@
 CREATE TABLE IF NOT EXISTS notification_delivery_status (
     notification_id UUID,
     profile_id UUID,
-    channel TEXT,
+    event TEXT,
     status TEXT,
     attempts INT,
     last_attempt TIMESTAMP,

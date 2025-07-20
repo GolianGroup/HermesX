@@ -37,7 +37,9 @@ type EventMutation struct {
 	name              *string
 	metadata          *map[string]interface{}
 	is_critical       *bool
+	is_protected      *bool
 	preferred_channel *string
+	template          *string
 	created_at        *time.Time
 	updated_at        *time.Time
 	clearedFields     map[string]struct{}
@@ -258,6 +260,42 @@ func (m *EventMutation) ResetIsCritical() {
 	m.is_critical = nil
 }
 
+// SetIsProtected sets the "is_protected" field.
+func (m *EventMutation) SetIsProtected(b bool) {
+	m.is_protected = &b
+}
+
+// IsProtected returns the value of the "is_protected" field in the mutation.
+func (m *EventMutation) IsProtected() (r bool, exists bool) {
+	v := m.is_protected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsProtected returns the old "is_protected" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldIsProtected(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsProtected is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsProtected requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsProtected: %w", err)
+	}
+	return oldValue.IsProtected, nil
+}
+
+// ResetIsProtected resets all changes to the "is_protected" field.
+func (m *EventMutation) ResetIsProtected() {
+	m.is_protected = nil
+}
+
 // SetPreferredChannel sets the "preferred_channel" field.
 func (m *EventMutation) SetPreferredChannel(s string) {
 	m.preferred_channel = &s
@@ -292,6 +330,55 @@ func (m *EventMutation) OldPreferredChannel(ctx context.Context) (v string, err 
 // ResetPreferredChannel resets all changes to the "preferred_channel" field.
 func (m *EventMutation) ResetPreferredChannel() {
 	m.preferred_channel = nil
+}
+
+// SetTemplate sets the "template" field.
+func (m *EventMutation) SetTemplate(s string) {
+	m.template = &s
+}
+
+// Template returns the value of the "template" field in the mutation.
+func (m *EventMutation) Template() (r string, exists bool) {
+	v := m.template
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTemplate returns the old "template" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldTemplate(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTemplate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTemplate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTemplate: %w", err)
+	}
+	return oldValue.Template, nil
+}
+
+// ClearTemplate clears the value of the "template" field.
+func (m *EventMutation) ClearTemplate() {
+	m.template = nil
+	m.clearedFields[event.FieldTemplate] = struct{}{}
+}
+
+// TemplateCleared returns if the "template" field was cleared in this mutation.
+func (m *EventMutation) TemplateCleared() bool {
+	_, ok := m.clearedFields[event.FieldTemplate]
+	return ok
+}
+
+// ResetTemplate resets all changes to the "template" field.
+func (m *EventMutation) ResetTemplate() {
+	m.template = nil
+	delete(m.clearedFields, event.FieldTemplate)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -400,7 +487,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 8)
 	if m.name != nil {
 		fields = append(fields, event.FieldName)
 	}
@@ -410,8 +497,14 @@ func (m *EventMutation) Fields() []string {
 	if m.is_critical != nil {
 		fields = append(fields, event.FieldIsCritical)
 	}
+	if m.is_protected != nil {
+		fields = append(fields, event.FieldIsProtected)
+	}
 	if m.preferred_channel != nil {
 		fields = append(fields, event.FieldPreferredChannel)
+	}
+	if m.template != nil {
+		fields = append(fields, event.FieldTemplate)
 	}
 	if m.created_at != nil {
 		fields = append(fields, event.FieldCreatedAt)
@@ -433,8 +526,12 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.Metadata()
 	case event.FieldIsCritical:
 		return m.IsCritical()
+	case event.FieldIsProtected:
+		return m.IsProtected()
 	case event.FieldPreferredChannel:
 		return m.PreferredChannel()
+	case event.FieldTemplate:
+		return m.Template()
 	case event.FieldCreatedAt:
 		return m.CreatedAt()
 	case event.FieldUpdatedAt:
@@ -454,8 +551,12 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldMetadata(ctx)
 	case event.FieldIsCritical:
 		return m.OldIsCritical(ctx)
+	case event.FieldIsProtected:
+		return m.OldIsProtected(ctx)
 	case event.FieldPreferredChannel:
 		return m.OldPreferredChannel(ctx)
+	case event.FieldTemplate:
+		return m.OldTemplate(ctx)
 	case event.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case event.FieldUpdatedAt:
@@ -490,12 +591,26 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsCritical(v)
 		return nil
+	case event.FieldIsProtected:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsProtected(v)
+		return nil
 	case event.FieldPreferredChannel:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPreferredChannel(v)
+		return nil
+	case event.FieldTemplate:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTemplate(v)
 		return nil
 	case event.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -540,7 +655,11 @@ func (m *EventMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *EventMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(event.FieldTemplate) {
+		fields = append(fields, event.FieldTemplate)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -553,6 +672,11 @@ func (m *EventMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *EventMutation) ClearField(name string) error {
+	switch name {
+	case event.FieldTemplate:
+		m.ClearTemplate()
+		return nil
+	}
 	return fmt.Errorf("unknown Event nullable field %s", name)
 }
 
@@ -569,8 +693,14 @@ func (m *EventMutation) ResetField(name string) error {
 	case event.FieldIsCritical:
 		m.ResetIsCritical()
 		return nil
+	case event.FieldIsProtected:
+		m.ResetIsProtected()
+		return nil
 	case event.FieldPreferredChannel:
 		m.ResetPreferredChannel()
+		return nil
+	case event.FieldTemplate:
+		m.ResetTemplate()
 		return nil
 	case event.FieldCreatedAt:
 		m.ResetCreatedAt()

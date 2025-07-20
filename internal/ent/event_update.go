@@ -62,6 +62,20 @@ func (eu *EventUpdate) SetNillableIsCritical(b *bool) *EventUpdate {
 	return eu
 }
 
+// SetIsProtected sets the "is_protected" field.
+func (eu *EventUpdate) SetIsProtected(b bool) *EventUpdate {
+	eu.mutation.SetIsProtected(b)
+	return eu
+}
+
+// SetNillableIsProtected sets the "is_protected" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableIsProtected(b *bool) *EventUpdate {
+	if b != nil {
+		eu.SetIsProtected(*b)
+	}
+	return eu
+}
+
 // SetPreferredChannel sets the "preferred_channel" field.
 func (eu *EventUpdate) SetPreferredChannel(s string) *EventUpdate {
 	eu.mutation.SetPreferredChannel(s)
@@ -73,6 +87,26 @@ func (eu *EventUpdate) SetNillablePreferredChannel(s *string) *EventUpdate {
 	if s != nil {
 		eu.SetPreferredChannel(*s)
 	}
+	return eu
+}
+
+// SetTemplate sets the "template" field.
+func (eu *EventUpdate) SetTemplate(s string) *EventUpdate {
+	eu.mutation.SetTemplate(s)
+	return eu
+}
+
+// SetNillableTemplate sets the "template" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableTemplate(s *string) *EventUpdate {
+	if s != nil {
+		eu.SetTemplate(*s)
+	}
+	return eu
+}
+
+// ClearTemplate clears the value of the "template" field.
+func (eu *EventUpdate) ClearTemplate() *EventUpdate {
+	eu.mutation.ClearTemplate()
 	return eu
 }
 
@@ -159,8 +193,17 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.IsCritical(); ok {
 		_spec.SetField(event.FieldIsCritical, field.TypeBool, value)
 	}
+	if value, ok := eu.mutation.IsProtected(); ok {
+		_spec.SetField(event.FieldIsProtected, field.TypeBool, value)
+	}
 	if value, ok := eu.mutation.PreferredChannel(); ok {
 		_spec.SetField(event.FieldPreferredChannel, field.TypeString, value)
+	}
+	if value, ok := eu.mutation.Template(); ok {
+		_spec.SetField(event.FieldTemplate, field.TypeString, value)
+	}
+	if eu.mutation.TemplateCleared() {
+		_spec.ClearField(event.FieldTemplate, field.TypeString)
 	}
 	if value, ok := eu.mutation.UpdatedAt(); ok {
 		_spec.SetField(event.FieldUpdatedAt, field.TypeTime, value)
@@ -219,6 +262,20 @@ func (euo *EventUpdateOne) SetNillableIsCritical(b *bool) *EventUpdateOne {
 	return euo
 }
 
+// SetIsProtected sets the "is_protected" field.
+func (euo *EventUpdateOne) SetIsProtected(b bool) *EventUpdateOne {
+	euo.mutation.SetIsProtected(b)
+	return euo
+}
+
+// SetNillableIsProtected sets the "is_protected" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableIsProtected(b *bool) *EventUpdateOne {
+	if b != nil {
+		euo.SetIsProtected(*b)
+	}
+	return euo
+}
+
 // SetPreferredChannel sets the "preferred_channel" field.
 func (euo *EventUpdateOne) SetPreferredChannel(s string) *EventUpdateOne {
 	euo.mutation.SetPreferredChannel(s)
@@ -230,6 +287,26 @@ func (euo *EventUpdateOne) SetNillablePreferredChannel(s *string) *EventUpdateOn
 	if s != nil {
 		euo.SetPreferredChannel(*s)
 	}
+	return euo
+}
+
+// SetTemplate sets the "template" field.
+func (euo *EventUpdateOne) SetTemplate(s string) *EventUpdateOne {
+	euo.mutation.SetTemplate(s)
+	return euo
+}
+
+// SetNillableTemplate sets the "template" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableTemplate(s *string) *EventUpdateOne {
+	if s != nil {
+		euo.SetTemplate(*s)
+	}
+	return euo
+}
+
+// ClearTemplate clears the value of the "template" field.
+func (euo *EventUpdateOne) ClearTemplate() *EventUpdateOne {
+	euo.mutation.ClearTemplate()
 	return euo
 }
 
@@ -346,8 +423,17 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	if value, ok := euo.mutation.IsCritical(); ok {
 		_spec.SetField(event.FieldIsCritical, field.TypeBool, value)
 	}
+	if value, ok := euo.mutation.IsProtected(); ok {
+		_spec.SetField(event.FieldIsProtected, field.TypeBool, value)
+	}
 	if value, ok := euo.mutation.PreferredChannel(); ok {
 		_spec.SetField(event.FieldPreferredChannel, field.TypeString, value)
+	}
+	if value, ok := euo.mutation.Template(); ok {
+		_spec.SetField(event.FieldTemplate, field.TypeString, value)
+	}
+	if euo.mutation.TemplateCleared() {
+		_spec.ClearField(event.FieldTemplate, field.TypeString)
 	}
 	if value, ok := euo.mutation.UpdatedAt(); ok {
 		_spec.SetField(event.FieldUpdatedAt, field.TypeTime, value)

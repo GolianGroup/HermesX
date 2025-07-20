@@ -23,7 +23,7 @@ type service struct {
 func NewService(repo repositories.Repository, nats nats.NatsConnection, redis producers.RedisClient, logger *zap.Logger) Service {
 	systemService := NewSystemService(repo.SystemRepository())
 	eventService := NewEventService(repo.EventRepository(), redis)
-	notificationService := NewNotificationService(repo.NotificationRepository(), repo.EventRepository(), logger, nats)
+	notificationService := NewNotificationService(repo.NotificationRepository(), repo.EventRepository(), repo.ProfileRepository(), logger, nats)
 
 	return &service{
 		systemService:       systemService,
