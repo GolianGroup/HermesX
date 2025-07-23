@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO: same as make migration and create
 // arangoRollbackCmd represents the ag_rollback command
 var arangoRollbackCmd = &cobra.Command{
 	Use:   "ag_rollback",

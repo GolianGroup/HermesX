@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO: same as postgres create
 // postgresRollbackCmd represents the pg_rollback command
 var postgresRollbackCmd = &cobra.Command{
 	Use:   "pg_rollback",

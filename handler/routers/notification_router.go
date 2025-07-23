@@ -19,8 +19,8 @@ func NewNotificationRouter(notificationController controllers.NotificationContro
 }
 
 func (r notificationRouter) AddRoutes(router fiber.Router) {
-	router.Post("", r.Controller.CreateNotification)
-	router.Post("/broadcast", r.Controller.BroadcastNotification)
+	router.Post("", r.Controller.CreateNotification)              //FIXME: Make it private and they must require api key or admin auth
+	router.Post("/broadcast", r.Controller.BroadcastNotification) //FIXME: Make it private and they must require api key or admin auth
 
 	router.Post("/read", r.Controller.ReadNotification)
 	router.Get("/:profileid", r.Controller.GetUserNotifications)

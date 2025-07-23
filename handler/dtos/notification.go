@@ -18,7 +18,7 @@ type GetNotification struct {
 type Read struct {
 	ProfileId gocql.UUID `json:"profile_id" validate:"required,uuid"`
 	Id        gocql.UUID `json:"id" validate:"required,uuid"`
-	Type      string     `json:"type" validate:"required"`
+	Type      string     `json:"type" validate:"required"` //FIXME: Souldn't it need enum?
 }
 
 type UserNotification struct {

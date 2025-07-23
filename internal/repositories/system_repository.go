@@ -7,6 +7,7 @@ import (
 	"hermesx/internal/producers"
 )
 
+// FIXME: add the health check data for nats and other dependencies aswell
 type SystemRepository interface {
 	DBPing(ctx context.Context) error
 	ArangoPing(ctx context.Context) error

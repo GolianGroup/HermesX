@@ -1,5 +1,6 @@
 package nats
 
+// FIXME: code duplicacy
 type CriticalMessage struct {
 	Destination string `json:"destination" validate:"required"`
 	Type        string `json:"type" validate:"required"`

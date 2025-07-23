@@ -51,7 +51,7 @@ func (Event) Fields() []ent.Field {
 			NotEmpty().
 			Validate(func(s string) error {
 				validChannels := []string{"email", "sms", "push"}
-				for _, valid := range validChannels {
+				for _, valid := range validChannels { //FIXME: use slice.contains
 					if s == valid {
 						return nil
 					}

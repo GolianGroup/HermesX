@@ -27,7 +27,7 @@ var postgresCreateCmd = &cobra.Command{
 			return
 		}
 
-		databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s:%s?sslmode=disable", dbConfig.DB.User, dbConfig.DB.Password, dbConfig.DB.Host, dbConfig.DB.Port)
+		databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s:%s?sslmode=disable", dbConfig.DB.User, dbConfig.DB.Password, dbConfig.DB.Host, dbConfig.DB.Port) //TODO: create a method for this in config
 
 		conn, err := sql.Open("pgx", databaseUrl)
 		if err != nil {
@@ -50,6 +50,7 @@ var postgresCreateCmd = &cobra.Command{
 			cmd.Printf("Database %s created successfully.\n", dbConfig.DB.DBName)
 			return
 		}
+		//TODO: make sure permission grants
 	},
 }
 

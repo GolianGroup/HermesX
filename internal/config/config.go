@@ -24,23 +24,23 @@ func LoadConfig(path string) (*Config, error) {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	if err := viper.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
+		return nil, fmt.Errorf("failed to read config file: %w", err) //TODO: use errors.Wrap for better error handling
 	}
 
 	if err := viper.Unmarshal(config); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err) //TODO: use errors.Wrap for better error handling
 	}
 
 	// Validate config values
 	validate := validator.New()
 	if err := validate.Struct(config); err != nil {
-		return nil, fmt.Errorf("config validation failed: %w", err)
+		return nil, fmt.Errorf("config validation failed: %w", err) //TODO: use errors.Wrap for better error handling
 	}
 
 	return config, nil
 }
 
-// func SetViperEnvMappings() {
+// func SetViperEnvMappings() { //TODO: remove commented code
 // 	// Set environment variable mappings
 // 	viper.SetEnvPrefix("APP") // Optional: adds APP_ prefix to all env variables
 
@@ -68,7 +68,7 @@ func LoadConfig(path string) (*Config, error) {
 // }
 
 // GetDSN returns database connection string
-func GetDSN(cfg *DatabaseConfig) string {
+func GetDSN(cfg *DatabaseConfig) string { //TODO: make this a method
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host,
 		cfg.Port,
@@ -80,7 +80,7 @@ func GetDSN(cfg *DatabaseConfig) string {
 }
 
 // GetRedisAddr returns redis connection address
-func GetRedisAddr(cfg *RedisConfig) string {
+func GetRedisAddr(cfg *RedisConfig) string { //TODO: make this a method
 	return fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 }
 
@@ -88,7 +88,7 @@ func GetRedisAddr(cfg *RedisConfig) string {
 // production environments.
 //
 // for more information about fields check the documentation
-func NewLoggerEncoderConfig(cfg *LoggerEncoderConfig) zapcore.EncoderConfig {
+func NewLoggerEncoderConfig(cfg *LoggerEncoderConfig) zapcore.EncoderConfig { //TODO: make this a method
 	return zapcore.EncoderConfig{
 		TimeKey:        "ts",
 		LevelKey:       cfg.LevelKey, // The logging level (e.g. "info", "error").
@@ -104,7 +104,7 @@ func NewLoggerEncoderConfig(cfg *LoggerEncoderConfig) zapcore.EncoderConfig {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 }
-func GetArangoStrings(cfg *ArangoConfig) ([]string, error) {
+func GetArangoStrings(cfg *ArangoConfig) ([]string, error) { //TODO: make this a method
 	connections := strings.Split(cfg.ConnStrs, ",")
 
 	allowedProtocols := []string{"tcp", "http", "https", "ssl", "unix", "http+tcp", "http+srv", "http+ssl", "http+unix"}
@@ -122,7 +122,7 @@ func GetArangoStrings(cfg *ArangoConfig) ([]string, error) {
 	return connections, nil
 }
 
-func GetNatsURL(host string, clientPort int) string {
+func GetNatsURL(host string, clientPort int) string { //TODO: make this a method
 	return fmt.Sprintf("nats://%s:%d/",
 		host,
 		clientPort,

@@ -2,14 +2,16 @@ package config
 
 import "time"
 
+//TODO: omit unused configs
+
 // Config holds all configuration for the application
 type Config struct {
 	Server      ServerConfig   `mapstructure:"server" validate:"required"`
-	DB          DatabaseConfig `mapstructure:"db" validate:"required"`
+	DB          DatabaseConfig `mapstructure:"db" validate:"required"` // TODO: What is the porpose? what kind of db?, Postgres
 	ArangoDB    ArangoConfig   `mapstructure:"arango" validate:"required"`
 	ScyllaDB    ScyllaDBConfig `mapstructure:"scylladb" vrequiredalidate:"required"`
 	Redis       RedisConfig    `mapstructure:"redis" validate:"required"`
-	JWT         JWTConfig      `mapstructure:"jwt" validate:"required"`
+	JWT         JWTConfig      `mapstructure:"jwt" validate:"required"` // TODO: unused
 	Logger      LoggerConfig   `mapstructure:"logger" validate:"required"`
 	GRPC        GRPCConfig     `mapstructure:"grpc" validate:"required"`
 	Nats        NatsConfig     `mapstructure:"nats" validate:"required"`
@@ -20,7 +22,7 @@ type Config struct {
 type ServerConfig struct {
 	Port         string `mapstructure:"port" validate:"required,number"`
 	Host         string `mapstructure:"host" validate:"required,hostname|ip"`
-	Mode         string `mapstructure:"mode" validate:"required,oneof=development production testing"`
+	Mode         string `mapstructure:"mode" validate:"required,oneof=development production testing"` // TODO: how does it differ from higher level envioronment
 	ReadTimeout  int    `mapstructure:"read_timeout" validate:"required,min=1"`
 	WriteTimeout int    `mapstructure:"write_timeout" validate:"required,min=1"`
 }
@@ -115,7 +117,7 @@ type NatsConfig struct {
 	Queue        string       `mapstructure:"queue" validate:"required"`
 }
 
-type StreamConfig struct {
+type StreamConfig struct { //TODO: Check with other projects
 	NoAck        bool          `mapstructure:"no_ack"`
 	Name         string        `mapstructure:"name" validate:"required"`
 	Retention    string        `mapstructure:"retention" validate:"required,oneof=limits interest workqueue"`

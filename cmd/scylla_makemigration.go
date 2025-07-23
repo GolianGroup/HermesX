@@ -38,7 +38,7 @@ scylla_makemigration add_users_table --dir ./database/scylla/migrations  # Custo
 		}
 
 		// Load config
-		dbConfig, err := config.LoadConfig("config/config.yml")
+		dbConfig, err := config.LoadConfig("config/config.yml") //TODO: same thing about configs
 		if err != nil {
 			log.Fatalf("Failed to load config: %v", err)
 			return

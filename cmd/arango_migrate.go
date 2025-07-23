@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO: same as make migration and create
 // arangoMigrateCmd represents the ag_migrate command
 var arangoMigrateCmd = &cobra.Command{
 	Use:   "ag_migrate",

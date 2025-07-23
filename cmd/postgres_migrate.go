@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO: same as postgres create
 // postgresMigrateCmd represents the pg_migrate command
 var postgresMigrateCmd = &cobra.Command{
 	Use:   "pg_migrate",
